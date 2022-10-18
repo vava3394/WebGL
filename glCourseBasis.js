@@ -92,44 +92,36 @@ class cubemap {
 
 		if(this.shader && this.loaded==4) {		
 
-			// Tell it to use our program (pair of shaders)
 			gl.useProgram(this.shader);
 			gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);
-			// look up where the vertex data needs to go.
+
 			var positionLocation = gl.getAttribLocation(this.shader, "a_position");
 
-			// lookup uniforms
 			var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
 			var viewDirectionProjectionInverseLocation =
       			gl.getUniformLocation(this.shader, "viewMatrix");
 
-			this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-			this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-
-			// Create a buffer for positions
 			var positionBuffer = gl.createBuffer();
-			// Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+
 			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-			// Put the positions in the buffer
+
 			setGeometry(gl);
 				
-			// Turn on the position attribute
 			gl.enableVertexAttribArray(positionLocation);
 		
-			// Bind the position buffer.
 			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 		
-			// Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-			var size = 2;          // 2 components per iteration
-			var type = gl.FLOAT;   // the data is 32bit floats
-			var normalize = false; // don't normalize the data
-			var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-			var offset = 0;        // start at the beginning of the buffer
+			var size = 2;          
+			var type = gl.FLOAT;   
+			var normalize = false; 
+			var stride = 0;        
+			var offset = 0;        
 			gl.vertexAttribPointer(
 				positionLocation, size, type, normalize, stride, offset);
 
 			mat4.identity(mvMatrix);
-			mat4.translate(mvMatrix, [0,0.2, 1]);
+			mat4.translate(mvMatrix, [0,0, -1]);
+			mat4.multiply(mvMatrix, pMatrix)
 			mat4.multiply(mvMatrix, rotMatrix)
 			
 			gl.uniformMatrix4fv(
@@ -195,6 +187,8 @@ class objmesh {
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uinverseRotMatrix");
+		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
 		gl.uniform1i(skyboxLocation, 0);
 	}
@@ -207,6 +201,9 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+		gl.uniformMatrix4fv(this.shader.inverseRotMatrix ,false,mat4.inverse(rotMatrix));
+		gl.uniform1f(this.shader.ratio,1.33);
+		mat4.inverse(rotMatrix)
 	}
 	
 	// --------------------------------------------
@@ -438,7 +435,7 @@ function webGLStart() {
 
 	PLANE = new plane();
 
-	OBJ1 = new objmesh('sphere.obj','mirroir');
+	OBJ1 = new objmesh('sphere.obj','transparent');
 	//OBJ2 = new objmesh('porsche.obj');
 	
 	tick();

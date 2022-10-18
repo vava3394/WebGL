@@ -1,16 +1,20 @@
-
 precision mediump float;
 
+// postions et normales
 varying vec4 pos3D;
 varying vec3 N;
 
-
+// texture.
 uniform samplerCube u_skybox;
 
-// ==============================================
-void main(void)
-{
-    vec3 R = reflect(normalize(vec3(pos3D)), normalize(N));
-    gl_FragColor = vec4(textureCube(u_skybox, R).rgb, 1.0);
+uniform mat4 uinverseRotMatrix;
+
+void main() {
+  vec3 worldNormal = normalize(N);
+  vec3 Vo = normalize(-pos3D.xyz);
+  vec3 dir = reflect(-Vo,worldNormal);
+  vec3 direction = mat3(uinverseRotMatrix)*dir;
+
+  gl_FragColor = textureCube(u_skybox, direction.xzy);
 
 }

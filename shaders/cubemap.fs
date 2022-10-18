@@ -6,5 +6,5 @@ uniform mat4 viewMatrix;
 varying vec4 v_position;
 void main() {
   vec4 t = viewMatrix * v_position;
-  gl_FragColor = textureCube(u_skybox, normalize(t.xyz / t.w));
+  gl_FragColor = textureCube(u_skybox, normalize(vec3(t.x,t.z,t.y) / t.w));
 }
