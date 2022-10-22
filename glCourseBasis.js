@@ -9,6 +9,8 @@ var rotMatrix = mat4.create();
 var distCENTER;
 
 var textCubeMap;
+var ni = 1.3;
+var isMirroir = true;
 // =====================================================
 
 var OBJ1 = null;
@@ -19,8 +21,66 @@ var CUBEMAP = null;
 // CUBEMAP
 // =====================================================
 
+
+function loadTextCubeMap(url,type,width,height){
+	var textCubeMap = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);	 
+
+	const faceInfos = [
+		{
+			target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+			url: url+'posx.'+type,
+		},
+		{
+			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+			url: url+'negx.'+type,
+		},
+		{
+			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+			url: url+'posy.'+type,
+		},
+		{
+			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+			url: url+'negy.'+type,
+		},
+		{
+			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+			url: url+'posz.'+type,
+		},
+		{
+			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+			url: url+'negz.'+type,
+		},
+		];
+	faceInfos.forEach((faceInfos) => {
+		const {target, url} = faceInfos;
+
+		const level = 0;
+		const internalFormat = gl.RGBA;
+		const format = gl.RGBA;
+		const type = gl.UNSIGNED_BYTE;
+	
+		//chargement des préférence de la texture
+		gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
+	
+		//chargement de l'image et envoie au GPU
+		const image = new Image();
+		image.crossOrigin="anonymous"
+		image.src = url;
+		image.addEventListener('load', function() {
+			gl.texImage2D(target, level, internalFormat, format, type, image);
+			gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+		});
+	});
+	gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+	return textCubeMap;
+}
+
 class cubemap {
 
+	// --------------------------------------------
 	constructor(){
 		this.objName = 'cubemap';
 		this.shaderName = 'cubemap';
@@ -29,128 +89,70 @@ class cubemap {
 		this.init();
 	}
 
+	// --------------------------------------------
 	init(){
-		textCubeMap = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);	 
-
-		const faceInfos = [
-			{
-			  target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-x.jpg',
-			},
-			{
-			  target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-x.jpg',
-			},
-			{
-			  target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-y.jpg',
-			},
-			{
-			  target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-y.jpg',
-			},
-			{
-			  target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-z.jpg',
-			},
-			{
-			  target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-			  url: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-z.jpg',
-			},
-		  ];
-		faceInfos.forEach((faceInfos) => {
-		  	const {target, url} = faceInfos;
-
-			// Upload the canvas to the cubemap face.
-			const level = 0;
-			const internalFormat = gl.RGBA;
-			const width = 512;
-			const height = 512;
-			const format = gl.RGBA;
-			const type = gl.UNSIGNED_BYTE;
-		
-			// setup each face so it's immediately renderable
-			gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-		
-			//charger l'image et envoie au GPU
-			const image = new Image();
-			image.crossOrigin="anonymous"
-			image.src = url;
-			image.addEventListener('load', function() {
-			  gl.texImage2D(target, level, internalFormat, format, type, image);
-			  gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-			});
-		});
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-  		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-
-		loadShaders(this);
+		textCubeMap = loadTextCubeMap('images/','jpg',2048,2048)
+		loadShaders(this);	
 	}
 
+	// --------------------------------------------
+	setShadersParams(){
+		gl.useProgram(this.shader);
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);
+
+		this.shader.positionLocation = gl.getAttribLocation(this.shader, "a_position");
+		this.shader.skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
+		this.shader.viewDirectionProjectionInverseLocation =
+			  gl.getUniformLocation(this.shader, "uViewMatrix");
+		var positionBuffer = gl.createBuffer();
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+		this.setGeometry(gl);
+		gl.enableVertexAttribArray(this.shader.positionLocation);
+		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+		gl.vertexAttribPointer(
+			this.shader.positionLocation, 2, gl.FLOAT, false, 0, 0);
+	}
+
+	// --------------------------------------------
+	setMatrixUniforms(){
+		mat4.identity(mvMatrix);
+		mat4.translate(mvMatrix, [0,0, -1]);
+		mat4.multiply(mvMatrix, pMatrix)
+		mat4.multiply(mvMatrix, rotMatrix)
+
+		gl.uniformMatrix4fv(
+			this.shader.viewDirectionProjectionInverseLocation, false,
+			mat4.inverse(mvMatrix));
+		gl.uniform1i(this.shader.skyboxLocation, 0);
+	}
+
+	// --------------------------------------------
+	//position afin de créer un quad de vue de la skybox
+	setGeometry(gl) {
+		var positions = new Float32Array(
+		  [
+			-1, -1,
+		   1, -1,
+		  -1,  1,
+		  -1,  1,
+		   1, -1,
+		   1,  1,
+		  ]);
+		gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+	}
+
+	// --------------------------------------------
 	draw(){
-
 		if(this.shader && this.loaded==4) {		
-
-			gl.useProgram(this.shader);
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);
-
-			var positionLocation = gl.getAttribLocation(this.shader, "a_position");
-
-			var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
-			var viewDirectionProjectionInverseLocation =
-      			gl.getUniformLocation(this.shader, "viewMatrix");
-
-			var positionBuffer = gl.createBuffer();
-
-			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-			setGeometry(gl);
-				
-			gl.enableVertexAttribArray(positionLocation);
-		
-			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-		
-			var size = 2;          
-			var type = gl.FLOAT;   
-			var normalize = false; 
-			var stride = 0;        
-			var offset = 0;        
-			gl.vertexAttribPointer(
-				positionLocation, size, type, normalize, stride, offset);
-
-			mat4.identity(mvMatrix);
-			mat4.translate(mvMatrix, [0,0, -1]);
-			mat4.multiply(mvMatrix, pMatrix)
-			mat4.multiply(mvMatrix, rotMatrix)
-			
-			gl.uniformMatrix4fv(
-				viewDirectionProjectionInverseLocation, false,
-				mat4.inverse(mvMatrix));
-
-			gl.uniform1i(skyboxLocation, 0);
-
+			this.setShadersParams();
+			this.setMatrixUniforms();
 			gl.depthFunc(gl.LEQUAL);
-		
 			gl.drawArrays(gl.TRIANGLES, 0, 6);
 		}
-		
 	}
 
 }
-
-function setGeometry(gl) {
-	var positions = new Float32Array(
-	  [
-		-1, -1,
-       1, -1,
-      -1,  1,
-      -1,  1,
-       1, -1,
-       1,  1,
-	  ]);
-	gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-  }
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -187,7 +189,8 @@ class objmesh {
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uinverseRotMatrix");
+		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
+		gl.uniform1i(gl.getUniformLocation(this.shader,'isMirroir'),isMirroir);
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
 		gl.uniform1i(skyboxLocation, 0);
@@ -202,7 +205,7 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.inverseRotMatrix ,false,mat4.inverse(rotMatrix));
-		gl.uniform1f(this.shader.ratio,1.33);
+		gl.uniform1f(this.shader.ratio,ni);
 		mat4.inverse(rotMatrix)
 	}
 	
@@ -435,8 +438,8 @@ function webGLStart() {
 
 	PLANE = new plane();
 
-	OBJ1 = new objmesh('sphere.obj','transparent');
-	//OBJ2 = new objmesh('porsche.obj');
+	OBJ1 = new objmesh('objs/porsche.obj','transparent');
+	OBJ2 = new objmesh('objs/sphere.obj','allShader');
 	
 	tick();
 }
@@ -444,11 +447,11 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	PLANE.draw();
+	// PLANE.draw();
 	CUBEMAP.draw();
-	OBJ1.draw();
+	// OBJ1.draw();
 	
-	//OBJ2.draw();
+	OBJ2.draw();
 }
 
 

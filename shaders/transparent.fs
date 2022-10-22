@@ -17,7 +17,7 @@ void main() {
   vec3 worldNormal = normalize(N);
   vec3 Vo = normalize(-pos3D.xyz);
   vec3 dirR = reflect(-Vo,worldNormal);
-  vec3 dirT = refract(-Vo,worldNormal,ni);
+  vec3 dirT = refract(-Vo,worldNormal,1.0/ni);
   vec3 directionR = mat3(uinverseRotMatrix)*dirR;
   vec3 directionT = mat3(uinverseRotMatrix)*dirT;
 
@@ -33,10 +33,6 @@ void main() {
   vec4 colR = vec4(textureCube(u_skybox, directionR.xzy).xyz*R,1.0);
   vec4 colT = vec4(textureCube(u_skybox, directionT.xzy).xyz*T,1.0);
 
-  
-
-  gl_FragColor = colR+colT;
-  //R=1.0;
-  //gl_FragColor = textureCube(u_skybox, direction.xzy)*R;
+  gl_FragColor = colT+colR;
 
 }
