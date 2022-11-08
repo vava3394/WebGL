@@ -290,6 +290,12 @@ function webGLStart() {
 	
 	var canvas = document.getElementById("WebGL-test");
 
+	const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+
 	canvas.onmousedown = handleMouseDown;
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;
