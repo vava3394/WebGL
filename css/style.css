@@ -1,15 +1,15 @@
-.settings{
+.settings {
     background-color: rgb(241, 241, 255);
-    width: fit-content;
     border-radius: 4px;
     color: #212529;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     padding: 6px;
-    margin: 10px 0px 0px 40px;
     position: absolute;
+    height: 100%;
+    width: 20%;
 }
 
-.main{
+.main {
     display: flex;
 }
 
@@ -17,5 +17,23 @@
     display: block;
     width: 100vw;
     height: 100vh;
-  }
-
+}
+nav .title {
+    padding: 20px;
+    font-size: 1.3em;
+    position: relative;
+}
+nav .title .open-menu-btn {
+    width: 30px;
+    height: max-content;
+    position: absolute;
+    display: block;
+    right: 20px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    cursor: pointer;
+}
+nav .title .open-menu-btn hr {
+    margin: 5px 0;
+}
