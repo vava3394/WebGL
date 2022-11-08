@@ -1,13 +1,13 @@
 // =====================================================
 // CUBEMAP
 // =====================================================
-let tabNameTexture=["chateau","space","plage"]
 let tabTextCubeMap=[];
 var textCubeMap;
 
-function loadTextCubeMap(url,value=0, type = "jpg" ,width = 2048, height = 2048){
-	tabTextCubeMap[value] = gl.createTexture();
-	
+function loadTextCubeMap(url, type = "jpg" ,width = 2048, height = 2048){
+	var newTextCubeMap = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP, newTextCubeMap);	 
+
 	const faceInfos = [
 		{
 			target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -42,28 +42,26 @@ function loadTextCubeMap(url,value=0, type = "jpg" ,width = 2048, height = 2048)
 		const format = gl.RGBA;
 		const type = gl.UNSIGNED_BYTE;
 	
-
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, tabTextCubeMap[value]);//on bind la texture	 
 		//chargement des préférence de la texture
 		gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
+	
 		//chargement de l'image et envoie au GPU
 		const image = new Image();
 		image.crossOrigin="anonymous"
 		image.src = url;
-		image.addEventListener('load', function() {	
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, tabTextCubeMap[value]);	 
+		image.addEventListener('load', function() {
 			gl.texImage2D(target, level, internalFormat, format, type, image);
 			gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);//on desactive la texture du bind
 		});
-		
 	});
+	gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
+	return newTextCubeMap;
 }
 
 function setImageTextCubeMap(value){
-    textCubeMap = tabTextCubeMap[value];
+    textCubeMap = loadTextCubeMap(value);
 }
 
 class cubemap {
@@ -74,25 +72,12 @@ class cubemap {
 		this.shaderName = 'cubemap';
 		this.loaded = -1;
 		this.shader = null;
-		//position afin de créer un quad de vue de la skybox
-		this.positions = new Float32Array(
-			[
-			  -1, -1,
-			 1, -1,
-			-1,  1,
-			-1,  1,
-			 1, -1,
-			 1,  1,
-			]);
 		this.init();
 	}
 
 	// --------------------------------------------
 	init(){
-		tabNameTexture.forEach((name,i)=>{
-			loadTextCubeMap(name,i);
-		})
-		textCubeMap = tabTextCubeMap[0];
+        textCubeMap = loadTextCubeMap('chateau');
   		loadShaders(this);	
 	}
 
@@ -107,7 +92,7 @@ class cubemap {
 		var positionBuffer = gl.createBuffer();
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
+		this.setGeometry(gl);
 		gl.enableVertexAttribArray(this.shader.positionLocation);
 		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 		gl.vertexAttribPointer(
@@ -128,14 +113,27 @@ class cubemap {
 	}
 
 	// --------------------------------------------
+	//position afin de créer un quad de vue de la skybox
+	setGeometry(gl) {
+		var positions = new Float32Array(
+		  [
+			-1, -1,
+		   1, -1,
+		  -1,  1,
+		  -1,  1,
+		   1, -1,
+		   1,  1,
+		  ]);
+		gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+	}
+
+	// --------------------------------------------
 	draw(){
-		if(this.shader && this.loaded==4) {	
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);	
+		if(this.shader && this.loaded==4) {		
 			this.setShadersParams();
 			this.setMatrixUniforms();
 			gl.depthFunc(gl.LEQUAL);
 			gl.drawArrays(gl.TRIANGLES, 0, 6);
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);	
 		}
 	}
 
