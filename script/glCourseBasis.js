@@ -11,13 +11,15 @@ var distCENTER;
 let tabObj = [];
 let obj;
 
-var ni = 1.0;
+var ni = 1.3;
 var isMirroir = false;
 // =====================================================
 
 var OBJ1 = null;
 var PLANE = null;
 var CUBEMAP = null;
+
+var colors = [1.0,1.0,1.0];
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -57,7 +59,7 @@ class objmesh {
 		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
 
 		this.shader.uColor = gl.getUniformLocation(this.shader,"uColorObj");
-		gl.uniform3f(this.shader.uColor,0.5,1,0);
+		gl.uniform3f(this.shader.uColor,colors[0],colors[1],colors[2]);
 
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
 		
