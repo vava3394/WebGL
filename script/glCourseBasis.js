@@ -11,7 +11,7 @@ var distCENTER;
 let tabObj = [];
 let obj;
 
-var ni = 1.3;
+var ni = 1.0;
 var isMirroir = false;
 // =====================================================
 
@@ -56,6 +56,9 @@ class objmesh {
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
 
+		this.shader.uColor = gl.getUniformLocation(this.shader,"uColorObj");
+		gl.uniform3f(this.shader.uColor,0.5,1,0);
+
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
 		
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
@@ -84,6 +87,7 @@ class objmesh {
 			this.setMatrixUniforms();
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
 			gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+			gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
 		}
 	}
 }
@@ -167,7 +171,6 @@ class plane {
 	draw() {
 		if(this.shader && this.loaded==4) {		
 			this.setShadersParams();
-			
 			gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vBuffer.numItems);
 			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
 		}
@@ -307,13 +310,10 @@ function webGLStart() {
 	tabObj.push(new objmesh('objs/sphere.obj','mirroir'));
 	tabObj.push(new objmesh('objs/porsche.obj','mirroir'));
 	tabObj.push(new objmesh('objs/mustang.obj','mirroir'));
-<<<<<<< HEAD
 	tabObj.push(new objmesh('objs/cube.obj','mirroir'));
 	tabObj.push(new objmesh('objs/Lara_Croft.obj','mirroir'));
-=======
->>>>>>> parent of 23b48e9 (lara croft)
 
-	obj = tabObj[0];
+	obj = tabObj[4];
 	
 	tick();
 }
@@ -334,6 +334,9 @@ function setNi(value){
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	PLANE.draw();
+	gl.cullFace(gl.FRONT);
+	PLANE.draw();
+	gl.cullFace(gl.BACK);
 	CUBEMAP.draw();
 	obj.draw();
 }

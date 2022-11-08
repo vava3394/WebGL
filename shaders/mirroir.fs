@@ -10,6 +10,7 @@ uniform samplerCube u_skybox;
 uniform mat4 uInverseRotMatrix;
 uniform float uRatio;
 uniform bool uIsMirroir;
+uniform vec3 uColorObj;
 
 void main() {
   float ni= uRatio;
@@ -35,10 +36,6 @@ void main() {
     vec4 colR = vec4(textureCube(u_skybox, directionR.xzy).xyz*R,1.0);
     vec4 colT = vec4(textureCube(u_skybox, directionT.xzy).xyz*T,1.0);
 
-<<<<<<< HEAD
     gl_FragColor = vec4((colT+colR).xyz*uColorObj,1);
-=======
-    gl_FragColor = colT+colR;
->>>>>>> parent of 23b48e9 (lara croft)
   }
 }
