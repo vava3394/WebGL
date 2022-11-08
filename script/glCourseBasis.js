@@ -311,6 +311,7 @@ function webGLStart() {
 	tabObj.push(new objmesh('objs/porsche.obj','mirroir'));
 	tabObj.push(new objmesh('objs/mustang.obj','mirroir'));
 	tabObj.push(new objmesh('objs/cube.obj','mirroir'));
+	tabObj.push(new objmesh('objs/Lara_Croft.obj','mirroir'));
 
 	obj = tabObj[4];
 	

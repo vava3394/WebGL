@@ -36,6 +36,6 @@ void main() {
     vec4 colR = vec4(textureCube(u_skybox, directionR.xzy).xyz*R,1.0);
     vec4 colT = vec4(textureCube(u_skybox, directionT.xzy).xyz*T,1.0);
 
-    gl_FragColor = (colT+colR);
+    gl_FragColor = vec4((colT+colR).xyz*uColorObj,1);
   }
 }
