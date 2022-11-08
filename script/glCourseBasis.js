@@ -13,6 +13,7 @@ let obj;
 
 var ni = 1.3;
 var isMirroir = false;
+var isTransparence = false;
 // =====================================================
 
 var OBJ1 = null;
@@ -62,6 +63,7 @@ class objmesh {
 		gl.uniform3f(this.shader.uColor,colors[0],colors[1],colors[2]);
 
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
+		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsTransparence'),isTransparence);
 		
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
@@ -331,6 +333,10 @@ function setObj(value){
 
 function setIsMirroir(value){
 	isMirroir = value;
+}
+
+function setIsTransparence(value){
+	isTransparence = value;
 }
 
 function setNi(value){
