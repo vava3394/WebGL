@@ -1,13 +1,14 @@
-.settings {
+.settings{
     background-color: rgb(241, 241, 255);
     width: fit-content;
     border-radius: 4px;
     color: #212529;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 6px;
     margin: 10px 0px 0px 40px;
 }
 
-.main {
+.main{
     display: flex;
 }
+
