@@ -47,7 +47,7 @@ function loadTextCubeMap(url,value=0, type = "jpg" ,width = 2048, height = 2048)
 		//chargement des préférence de la texture
 		gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
 
-		//chargement de l'image et envoie au GPU
+		//chargement de l'image
 		const image = new Image();
 		image.crossOrigin="anonymous"
 		image.src = url;

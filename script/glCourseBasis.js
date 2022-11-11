@@ -11,13 +11,16 @@ var distCENTER;
 let tabObj = [];
 let obj;
 
-var ni = 1.0;
+var ni = 1.3;
 var isMirroir = false;
+var isTransparence = false;
 // =====================================================
 
 var OBJ1 = null;
 var PLANE = null;
 var CUBEMAP = null;
+
+var colors = [1.0,1.0,1.0];
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -57,9 +60,10 @@ class objmesh {
 		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
 
 		this.shader.uColor = gl.getUniformLocation(this.shader,"uColorObj");
-		gl.uniform3f(this.shader.uColor,0.5,1,0);
+		gl.uniform3f(this.shader.uColor,colors[0],colors[1],colors[2]);
 
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
+		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsTransparence'),isTransparence);
 		
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
@@ -288,6 +292,12 @@ function webGLStart() {
 	
 	var canvas = document.getElementById("WebGL-test");
 
+	const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+
 	canvas.onmousedown = handleMouseDown;
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;
@@ -326,6 +336,10 @@ function setIsMirroir(value){
 	isMirroir = value;
 }
 
+function setIsTransparence(value){
+	isTransparence = value;
+}
+
 function setNi(value){
 	ni=value;
 }
@@ -333,10 +347,9 @@ function setNi(value){
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.disable(gl.CULL_FACE);
 	PLANE.draw();
-	gl.cullFace(gl.FRONT);
-	PLANE.draw();
-	gl.cullFace(gl.BACK);
+	gl.enable(gl.CULL_FACE);
 	CUBEMAP.draw();
 	obj.draw();
 }
