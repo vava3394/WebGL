@@ -346,10 +346,9 @@ function setNi(value){
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.disable(gl.CULL_FACE);
 	PLANE.draw();
-	gl.cullFace(gl.FRONT);
-	PLANE.draw();
-	gl.cullFace(gl.BACK);
+	gl.enable(gl.CULL_FACE);
 	CUBEMAP.draw();
 	obj.draw();
 }
