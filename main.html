@@ -53,7 +53,7 @@
                             <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="myRange" value="1.3" min="1.0" max="3.0" step="0.1" onchange="handleNi(this.value)" />
                             <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="myInput" step="0.1" onchange="handleNi(this.value)" />
                             <br /><label for="colorpicker" style="margin-left: 10px;">Choisie ta couleur </label>
-                            <input type="color" id="colorpicker" value="#ffffff" onchange="handleColor(event)" />
+                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
                             <div class="setting-check-mirroir" id="val">
                                 <label for="mirroir">Miroir</label>
                                 <input type="checkbox" id="mirroir" onchange="setIsMirroir(this.checked)" checked/>
@@ -93,6 +93,7 @@
 
                     // 1.3 par defaut
                     handleNi(1.3);
+                    setIsMirroir(true);
                     document.querySelector(".open-menu-btn").addEventListener("click", function () {
                     if (document.querySelector("body").classList.contains("closed-menu")) {
                         document.querySelector("body").classList.remove("closed-menu");
