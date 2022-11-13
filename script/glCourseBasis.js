@@ -316,12 +316,11 @@ function webGLStart() {
 
 	PLANE = new plane();
 
-	tabObj.push(new objmesh('objs/bunny.obj','mirroir'));
-	tabObj.push(new objmesh('objs/sphere.obj','mirroir'));
-	tabObj.push(new objmesh('objs/porsche.obj','mirroir'));
-	tabObj.push(new objmesh('objs/mustang.obj','mirroir'));
-	tabObj.push(new objmesh('objs/cube.obj','mirroir'));
-	tabObj.push(new objmesh('objs/Lara_Croft.obj','mirroir'));
+	tabObj.push(new objmesh('objs/bunny.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/sphere.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/porsche.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/mustang.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/cube.obj','lightEffect'));
 
 	obj = tabObj[4];
 	
