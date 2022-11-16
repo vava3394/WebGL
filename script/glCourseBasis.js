@@ -3,6 +3,7 @@
 var gl;
 
 // =====================================================
+var mvLightMatrix = mat4.create();
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
@@ -12,15 +13,46 @@ let tabObj = [];
 let obj;
 
 var ni = 1.3;
+var sigma = 0.01;
+// =====================================================
 var isMirroir = false;
 var isTransparence = false;
+// =====================================================
+
+var colors = [1.0,1.0,1.0];
+
+// =====================================================
+var light;
 // =====================================================
 
 var OBJ1 = null;
 var PLANE = null;
 var CUBEMAP = null;
 
-var colors = [1.0,1.0,1.0];
+// =====================================================
+// Light, lumière
+// =====================================================
+
+class Light {
+
+	constructor(pos, col) {
+		this.position = pos ;
+		this.color = col ;
+		this.rotX = -1;
+		this.rotY = 0; 
+	}
+
+// =====================================================
+	rotate(){
+		mat4.identity(mvLightMatrix);
+		mat4.rotate(mvLightMatrix, this.rotX, [1, 0, 0]);
+		mat4.rotate(mvLightMatrix, this.rotY, [0, 0, 1]);
+
+		let rotDir = mat4.multiplyVec3(mvLightMatrix, [1., 0., 0.]);
+		this.position = vec3.scale(rotDir, 10, this.position);
+	}
+}
+
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -60,14 +92,18 @@ class objmesh {
 		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
 
 		this.shader.uColor = gl.getUniformLocation(this.shader,"uColorObj");
-		gl.uniform3f(this.shader.uColor,colors[0],colors[1],colors[2]);
+		gl.uniform3fv(this.shader.uColor,colors);
 
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsTransparence'),isTransparence);
-		gl.uniform1f(gl.getUniformLocation(this.shader,'ualpha'),0.01);
+		gl.uniform1f(gl.getUniformLocation(this.shader,'ualpha'),sigma);
 
-		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
-		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
+		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.pos'),light.position);
+		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.color'),light.color);
+
+
+		this.shader.ratio = gl.getUniformLocation(this.shader, "uNi");
+		var skyboxLocation = gl.getUniformLocation(this.shader, "uskybox");
 		gl.uniform1i(skyboxLocation, 0);
 	}
 	
@@ -317,6 +353,8 @@ function webGLStart() {
 
 	PLANE = new plane();
 
+	light = new Light([1.0,0.0,0.0],[1.0,1.0,1.0]);
+
 	tabObj.push(new objmesh('objs/bunny.obj','lightEffect'));
 	tabObj.push(new objmesh('objs/sphere.obj','lightEffect'));
 	tabObj.push(new objmesh('objs/porsche.obj','lightEffect'));
@@ -345,6 +383,10 @@ function setNi(value){
 	ni=value;
 }
 
+function setSigma(value){
+	sigma = value;
+}
+
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
@@ -354,6 +396,3 @@ function drawScene() {
 	CUBEMAP.draw();
 	obj.draw();
 }
-
-
-
