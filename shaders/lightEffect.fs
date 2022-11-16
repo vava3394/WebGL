@@ -18,6 +18,7 @@ uniform mat4 uInverseRotMatrix;
 uniform float uNi;
 uniform bool uIsMirroir;
 uniform bool uIsTransparence;
+uniform bool uIsCookerTorrance;
 uniform vec3 uColorObj;
 uniform float ualpha;
 uniform Light uLight;
@@ -94,14 +95,15 @@ void main() {
   vec3 directionR = (mat3(uInverseRotMatrix)*reflect(-o,n)).xzy;
   vec3 directionT = (mat3(uInverseRotMatrix)*refract(-o,n,1.0/uNi)).xzy;
 
-  vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
-  float cosThetaI = max(0.0,normalize(dot(i,n)));
-  color = (uLight.color*cookTorrance*cosThetaI);
-
+  if(uIsCookerTorrance){
+    vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
+    float cosThetaI = max(0.0,normalize(dot(i,n)));
+    color = (uLight.color*cookTorrance*cosThetaI);
+  }
 
   if (uIsMirroir && uIsTransparence){
     
-    float R = coefFrenel(i,n);
+    float R = coefFrenel(o,n);
     float T = 1.0 - R;
     vec4 colR = vec4(textureCube(uskybox, directionR).xyz*R,1.0);
     vec4 colT = vec4(textureCube(uskybox, directionT).xyz*T,1.0);
