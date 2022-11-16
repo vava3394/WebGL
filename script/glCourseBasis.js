@@ -64,7 +64,8 @@ class objmesh {
 
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsTransparence'),isTransparence);
-		
+		gl.uniform1f(gl.getUniformLocation(this.shader,'ualpha'),0.01);
+
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uRatio");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "u_skybox");
 		gl.uniform1i(skyboxLocation, 0);
@@ -316,14 +317,14 @@ function webGLStart() {
 
 	PLANE = new plane();
 
-	tabObj.push(new objmesh('objs/bunny.obj','mirroir'));
-	tabObj.push(new objmesh('objs/sphere.obj','mirroir'));
-	tabObj.push(new objmesh('objs/porsche.obj','mirroir'));
-	tabObj.push(new objmesh('objs/mustang.obj','mirroir'));
-	tabObj.push(new objmesh('objs/cube.obj','mirroir'));
-	tabObj.push(new objmesh('objs/Lara_Croft.obj','mirroir'));
+	tabObj.push(new objmesh('objs/bunny.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/sphere.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/porsche.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/mustang.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/cube.obj','lightEffect'));
+	tabObj.push(new objmesh('objs/Lara_Croft.obj','lightEffect'));
 
-	obj = tabObj[4];
+	obj = tabObj[0];
 	
 	tick();
 }
