@@ -67,13 +67,17 @@
                             <label for="indices" id="val">Indices de réfraction</label>
                             <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="myRange" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
                             <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="myInput" step="0.1" onchange="handleNi(this.value)" />
-                            <label for="indices" id="val">Sigma</label>
-                            <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.0" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
-                            <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
-
-                            <br /> <br /><label for="colorpicker" style="margin-left: 10px;">Choisie ta couleur </label>
-                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
-                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                            <div>
+                                <label for="indices" id="val">Sigma</label> </br>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.0" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
+                                <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
+                                <br /> <br />
+                                <label for="colorpicker" style="margin-left: 10px;">Choisie ta couleur </label>
+                                <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
+                                <br /> <br />
+                                <label for="colorpicker" style="margin-left: 10px;">Couleur lumière </label>
+                                <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                            </div>
                         </div>
                 </ul>
             </nav>
