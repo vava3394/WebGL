@@ -48,21 +48,18 @@ float coefBeckmann(vec3 m,vec3 n)
 
 	float f1 = exp(-tan2Theta / (2.0 * sigma));
 	float f2 = PI * sigma * cos4Theta;
-	float f = (1.0 / f2) * f1;
-
-	return f;
-
+	return (1.0 / f2) * f1;
 }
 
 float coefOmbrage(vec3 n, vec3 m, vec3 o, vec3 i){
-  float nm = max(0.0,dot(n,m));
-  float no = max(0.0,dot(n,o));
-  float om = max(0.0,dot(o,m));
-  float ni = max(0.0,dot(n,i));
-  float im = max(0.0,dot(i,m));
+  float NM = max(0.0,dot(n,m));
+  float NO = max(0.0,dot(n,o));
+  float OM = max(0.0,dot(o,m));
+  float NI = max(0.0,dot(n,i));
+  float IM = max(0.0,dot(i,m));
 
-  float val1 = (2.0*nm*no)/om;
-  float val2 = (2.0*nm*ni)/im;
+  float val1 = (2.0*NM*NO)/OM;
+  float val2 = (2.0*NM*NI)/IM;
 
   return min(1.0,min(val1,val2));
 }
@@ -90,7 +87,7 @@ vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
 void main() {
   vec3 colorAmbiant = vec3(0.2,0.2,0.2);
   vec3 color = uColorObj;
-  vec3 Kd = color;
+  vec3 Kd = uColorObj;
 
   vec3 n = normalize(N);
   vec3 o = normalize(-pos3D.xyz);
@@ -101,7 +98,7 @@ void main() {
 
   if(uIsCookerTorrance){
     vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
-    float cosThetaI = max(0.0,normalize(dot(i,n)));
+    float cosThetaI = max(0.0,dot(i,n));
     color = (uLight.color*cookTorrance*cosThetaI)+(Kd/PI);
   }
 

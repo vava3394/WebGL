@@ -55,9 +55,7 @@ class objmesh {
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsCookerTorrance'),isCookerTorrance);
 		gl.uniform1f(gl.getUniformLocation(this.shader,'usigma'),sigma);
 
-		this.shader.uLightposition = gl.getUniformLocation(this.shader,'uLight.pos');
-
-		gl.uniform3fv(this.shader.uLightposition,LIGHT.position);
+		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.pos'),LIGHT.position);
 		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.color'),LIGHT.color);
 
 
