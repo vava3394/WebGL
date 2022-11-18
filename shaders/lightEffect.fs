@@ -20,25 +20,28 @@ uniform bool uIsMirroir;
 uniform bool uIsTransparence;
 uniform bool uIsCookerTorrance;
 uniform vec3 uColorObj;
-uniform float ualpha;
+uniform float usigma;
 uniform Light uLight;
 
 float coefFrenel(vec3 i, vec3 m){
   //Facteur de Fresnel
   float c = dot(i,m);
+  if(c<=0.0){
+    return 0.0;
+  }
   float g = sqrt(uNi*uNi+c*c-1.0);
   float gmc = g-c;
   float gpc = g+c;
   float cgpc = c*(gpc)-1.0;
   float cgmc = c*(gmc)+1.0;
-  return 0.5*(gmc*gmc)/(gpc*gpc)*(1.0+(cgpc*cgpc)/(cgmc*cgmc));
+  return 0.5*((gmc*gmc)/(gpc*gpc))*(1.0+(cgpc*cgpc)/(cgmc*cgmc));
 }
 
-float coefBeckmann(vec3 M)
+float coefBeckmann(vec3 m,vec3 n)
 {
 
-	float sigma = ualpha*ualpha;
-	float cosTheta = dot(N,M);
+	float sigma = usigma*usigma;
+	float cosTheta = dot(n,m);
 	float cos2Theta = cosTheta*cosTheta;
 	float cos4Theta = cos2Theta*cos2Theta;
 	float tan2Theta = (1. - cos2Theta) / cos2Theta;
@@ -71,7 +74,7 @@ vec3 getM(vec3 o, vec3 i){
 vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
   vec3 m = getM(o,i);
   float F = coefFrenel(i, m);
-  float D = coefBeckmann(m);
+  float D = coefBeckmann(m,n);
   float G = coefOmbrage(n, m, o, i);
 
   float IN = dot(i,n);
@@ -85,6 +88,7 @@ vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
 
 
 void main() {
+  vec3 colorAmbiant = vec3(0.2,0.2,0.2);
   vec3 color = uColorObj;
   vec3 Kd = color;
 
@@ -98,7 +102,7 @@ void main() {
   if(uIsCookerTorrance){
     vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
     float cosThetaI = max(0.0,normalize(dot(i,n)));
-    color = (uLight.color*cookTorrance*cosThetaI);
+    color = (uLight.color*cookTorrance*cosThetaI)+(Kd/PI);
   }
 
   if (uIsMirroir && uIsTransparence){

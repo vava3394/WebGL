@@ -9,224 +9,17 @@ var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
 var distCENTER;
 
-let tabObj = [];
 let obj;
 
-var ni = 1.3;
-var sigma = 0.01;
 // =====================================================
-var isMirroir = false;
-var isTransparence = false;
-var isCookerTorrance = false;
-// =====================================================
-
-var colors = [1.0,1.0,1.0];
-
-// =====================================================
-var light;
-// =====================================================
-
+var LIGHT;
 var OBJ1 = null;
 var PLANE = null;
 var CUBEMAP = null;
 
 // =====================================================
-// Light, lumière
-// =====================================================
-
-class Light {
-
-	constructor(pos, col) {
-		this.position = pos ;
-		this.color = col ;
-		this.rotX = -1;
-		this.rotY = 0; 
-	}
-
-// =====================================================
-	rotate(){
-		mat4.identity(mvLightMatrix);
-		mat4.rotate(mvLightMatrix, this.rotX, [1, 0, 0]);
-		mat4.rotate(mvLightMatrix, this.rotY, [0, 0, 1]);
-
-		let rotDir = mat4.multiplyVec3(mvLightMatrix, [1., 0., 0.]);
-		this.position = vec3.scale(rotDir, 10, this.position);
-	}
-}
-
-
-// =====================================================
-// OBJET 3D, lecture fichier obj
-// =====================================================
-
-class objmesh {
-
-	// --------------------------------------------
-	constructor(objFname,shaderName) {
-		this.objName = objFname;
-		this.shaderName = shaderName;
-		this.loaded = -1;
-		this.shader = null;
-		this.mesh = null;
-		
-		loadObjFile(this);
-		loadShaders(this);
-	}
-
-	// --------------------------------------------
-	setShadersParams() {
-		gl.useProgram(this.shader);
-
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aVertexNormal");
-		gl.enableVertexAttribArray(this.shader.nAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
-		gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-		this.shader.inverseRotMatrix = gl.getUniformLocation(this.shader, "uInverseRotMatrix");
-
-		this.shader.uColor = gl.getUniformLocation(this.shader,"uColorObj");
-		gl.uniform3fv(this.shader.uColor,colors);
-
-		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMirroir'),isMirroir);
-		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsTransparence'),isTransparence);
-		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsCookerTorrance'),isCookerTorrance);
-		gl.uniform1f(gl.getUniformLocation(this.shader,'ualpha'),sigma);
-
-		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.pos'),light.position);
-		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.color'),light.color);
-
-
-		this.shader.ratio = gl.getUniformLocation(this.shader, "uNi");
-		var skyboxLocation = gl.getUniformLocation(this.shader, "uskybox");
-		gl.uniform1i(skyboxLocation, 0);
-	}
-	
-	// --------------------------------------------
-	setMatrixUniforms() {
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-		gl.uniformMatrix4fv(this.shader.inverseRotMatrix ,false,mat4.inverse(rotMatrix));
-		gl.uniform1f(this.shader.ratio,ni);
-		mat4.inverse(rotMatrix)
-	}
-	
-	// --------------------------------------------
-	draw() {
-		if(this.shader && this.loaded==4 && this.mesh != null) {
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, textCubeMap);
-			this.setShadersParams();
-			this.setMatrixUniforms();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-			gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-		}
-	}
-}
-
-
-
-// =====================================================
-// PLAN 3D, Support géométrique
-// =====================================================
-
-class plane {
-	
-	// --------------------------------------------
-	constructor() {
-		this.objName = 'plane';
-		this.shaderName='plane';
-		this.loaded=-1;
-		this.shader=null;
-		this.initAll();
-	}
-		
-	// --------------------------------------------
-	initAll() {
-		var size=1.0;
-		var vertices = [
-			-size, -size, 0.1,
-			 size, -size, 0.1,
-			 size, size, 0.1,
-			-size, size, 0.1
-		];
-
-		var texcoords = [
-			0.0,0.0,
-			0.0,1.0,
-			1.0,1.0,
-			1.0,0.0
-		];
-
-		this.vBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		this.vBuffer.itemSize = 3;
-		this.vBuffer.numItems = 4;
-
-		this.tBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
-		this.tBuffer.itemSize = 2;
-		this.tBuffer.numItems = 4;
-
-		loadShaders(this);
-	}
-	
-	
-	// --------------------------------------------
-	setShadersParams() {
-		gl.useProgram(this.shader);
-
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib, this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
-		gl.enableVertexAttribArray(this.shader.tAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.vertexAttribPointer(this.shader.tAttrib,this.tBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-
-		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-	}
-
-	// --------------------------------------------
-	draw() {
-		if(this.shader && this.loaded==4) {		
-			this.setShadersParams();
-			gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vBuffer.numItems);
-			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
-		}
-	}
-
-}
-
-
-// =====================================================
 // FONCTIONS GENERALES, INITIALISATIONS
 // =====================================================
-
-
 
 // =====================================================
 function initGL(canvas)
@@ -247,7 +40,6 @@ function initGL(canvas)
 	}
 }
 
-
 // =====================================================
 loadObjFile = function(OBJ3D)
 {
@@ -266,8 +58,6 @@ loadObjFile = function(OBJ3D)
 	xhttp.open("GET", OBJ3D.objName, true);
 	xhttp.send();
 }
-
-
 
 // =====================================================
 function loadShaders(Obj3D) {
@@ -325,7 +115,6 @@ function compileShaders(Obj3D)
 	}
 }
 
-
 // =====================================================
 function webGLStart() {
 	
@@ -355,7 +144,7 @@ function webGLStart() {
 
 	PLANE = new plane();
 
-	light = new Light([1.0,0.0,0.0],[1.0,1.0,1.0]);
+	LIGHT = new Light([0.0,0.0,0.0],[1.0,1.0,1.0]);
 
 	tabObj.push(new objmesh('objs/bunny.obj','lightEffect'));
 	tabObj.push(new objmesh('objs/sphere.obj','lightEffect'));
@@ -369,26 +158,32 @@ function webGLStart() {
 	tick();
 }
 
+// =====================================================
 function setObj(value){
 	obj = tabObj[value];
 }
 
+// =====================================================
 function setIsMirroir(value){
 	isMirroir = value;
 }
 
+// =====================================================
 function setIsCooker(value){
 	isCookerTorrance = value;
 }
 
+// =====================================================
 function setIsTransparence(value){
 	isTransparence = value;
 }
 
+// =====================================================
 function setNi(value){
 	ni=value;
 }
 
+// =====================================================
 function setSigma(value){
 	sigma = value;
 }
