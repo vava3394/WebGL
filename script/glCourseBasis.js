@@ -179,6 +179,16 @@ function setIsTransparence(value){
 }
 
 // =====================================================
+function setIsEchantionnage(value){
+	isEchantionnage = value;
+}
+
+// =====================================================
+function setIterationEchantionnage(value){
+	nbIteration = value;
+}
+
+// =====================================================
 function setNi(value){
 	ni=value;
 }

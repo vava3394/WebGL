@@ -3,10 +3,12 @@ let tabObj = [];
 
 var ni = 1.3;
 var sigma = 0.01;
+var nbIteration = 90.0;
 // =====================================================
 var isMirroir = false;
 var isTransparence = false;
 var isCookerTorrance = false;
+var isEchantionnage = false;
 
 var colors = [1.0,1.0,1.0];
 
@@ -58,6 +60,8 @@ class objmesh {
 		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.pos'),LIGHT.position);
 		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.color'),LIGHT.color);
 
+		gl.uniform1f(gl.getUniformLocation(this.shader,"uNbIteration"),nbIteration);
+		gl.uniform1i(gl.getUniformLocation(this.shader,"uIsEchantillonnage"),isEchantionnage);
 
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uNi");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "uskybox");
