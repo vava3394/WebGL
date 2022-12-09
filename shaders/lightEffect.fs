@@ -104,7 +104,7 @@ vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO, vec3 vecI){
   
   vec3 color = vec3(0.0);
   float currentIteration = 0.0;
-  for(float i = 0.0; i < 1000.0; ++i) {
+  for(float i = 0.0; i < 100.0; ++i) {
     if(i>iter){break;}
     currentIteration = i;
 
@@ -114,14 +114,14 @@ vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO, vec3 vecI){
     float phi = rand1 * 2.0 * PI;
     float theta = atan(sqrt(- usigma * usigma * log(1.0 - rand2)));
 
-    // float x = sin(theta) * cos(phi);
-    // float y = sin(theta) * sin(phi);
-    // float z = cos(theta);
+    float x = sin(theta) * cos(phi);
+    float y = sin(theta) * sin(phi);
+    float z = cos(theta);
     
     // vec3 m = vec3(x,y,z);
 
-    vec3 m = rotZ(vecN,phi);
-    m= rotY(m,theta);
+    vec3 m = normalize(rotZ(vecN,phi));
+    m= normalize(rotY(m,theta));
     
     float pdf = coefBeckmann(m,vecN) * cos(theta);
     vec3 cookTorrance = getCookTorrance(Kd,vecI,vecO,vecN,m);
@@ -154,7 +154,7 @@ void main() {
     vec3 m = getM(vecO,vecI);
     vec3 cookTorrance = getCookTorrance(Kd,vecI,vecO,vecN,m);
     float cosThetaI = max(0.0,dot(vecI,vecN));
-    color = (uLight.color*cookTorrance*cosThetaI)+(Kd/PI);
+    color = (uLight.color*cookTorrance*cosThetaI);
   }
 
   if (uIsMirroir && uIsTransparence){
