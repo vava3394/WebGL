@@ -103,25 +103,25 @@ vec3 rotY(in vec3 v, float ang){
 vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO, vec3 vecI){
   
   vec3 color = vec3(0.0);
-  float currentIteration;
-  for(float i = 0.0; i < 1000.0; i++) {
+  float currentIteration = 0.0;
+  for(float i = 0.0; i < 1000.0; ++i) {
     if(i>iter){break;}
     currentIteration = i;
 
     float rand1 = random(pos3D.xy + i);
     float rand2 = random(pos3D.xy + rand1);
 
-    float phi = rand1 * (PI * PI);
+    float phi = rand1 * 2.0 * PI;
     float theta = atan(sqrt(- usigma * usigma * log(1.0 - rand2)));
 
-    float x = sin(theta) * cos(phi);
-    float y = sin(theta) * sin(phi);
-    float z = cos(theta);
+    // float x = sin(theta) * cos(phi);
+    // float y = sin(theta) * sin(phi);
+    // float z = cos(theta);
     
-    vec3 m = vec3(x,y,z);
+    // vec3 m = vec3(x,y,z);
 
-    // vec3 m = rotZ(vecN,phi);
-    // m= rotY(m,theta);
+    vec3 m = rotZ(vecN,phi);
+    m= rotY(m,theta);
     
     float pdf = coefBeckmann(m,vecN) * cos(theta);
     vec3 cookTorrance = getCookTorrance(Kd,vecI,vecO,vecN,m);
