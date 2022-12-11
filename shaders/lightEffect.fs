@@ -64,29 +64,30 @@ float coefOmbrage(vec3 n, vec3 m, vec3 o, vec3 i){
   return min(1.0,min(val1,val2));
 }
 
-vec3 getM(vec3 o, vec3 i){
+vec3 getNormalMicroFacette(vec3 o, vec3 i){
   return normalize(i+o);
 }
 
 vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
-  vec3 m = getM(o,i);
+  vec3 m = getNormalMicroFacette(o,i);
   float F = coefFrenel(i, m);
   float D = coefBeckmann(m,n);
   float G = coefOmbrage(n, m, o, i);
 
-  float IN = dot(i,n);
-  float ON = dot(o,n);
+  float IN = max(0.0,dot(i,n));
+  float ON = max(0.0,dot(o,n));
 
   float brdf = (F*D*G)/(4.0*IN*ON);
-  
-  return (1.0-F)*(Kd/PI)+brdf;
+  if(brdf<0.0){
+    return vec3(0.0);
+  }
+  return ((1.0-F)*(Kd/PI)+brdf);
 }
 
 
 
 void main() {
-  vec3 colorAmbiant = vec3(0.2,0.2,0.2);
-  vec3 color = uColorObj;
+  vec3 colorFinal = uColorObj;
   vec3 Kd = uColorObj;
 
   vec3 n = normalize(N);
@@ -99,7 +100,12 @@ void main() {
   if(uIsCookerTorrance){
     vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
     float cosThetaI = max(0.0,dot(i,n));
-    color = (uLight.color*cookTorrance*cosThetaI)+(Kd/PI);
+    if(cosThetaI>0.0){
+      colorFinal = (uLight.color*cookTorrance*cosThetaI)+(Kd/PI);
+    }else{
+      colorFinal = vec3(0.0);
+    }
+    
   }
 
   if (uIsMirroir && uIsTransparence){
@@ -109,13 +115,13 @@ void main() {
     vec4 colR = vec4(textureCube(uskybox, directionR).xyz*R,1.0);
     vec4 colT = vec4(textureCube(uskybox, directionT).xyz*T,1.0);
 
-    gl_FragColor = vec4((colT+colR).xyz*color,1);
+    gl_FragColor = vec4((colT+colR).xyz*colorFinal,1.0);
   }else if(uIsMirroir){
-    gl_FragColor = vec4(textureCube(uskybox, directionR).xyz*color,1.0);
+    gl_FragColor = vec4(textureCube(uskybox, directionR).xyz*colorFinal,1.0);
   }else if (uIsTransparence){
-    gl_FragColor = vec4(textureCube(uskybox, directionT).xyz*color,1.0);
+    gl_FragColor = vec4(textureCube(uskybox, directionT).xyz*colorFinal,1.0);
   }else{
-    gl_FragColor=vec4(color,1.0);
+    gl_FragColor=vec4(colorFinal,1.0);
   }
 
 }
