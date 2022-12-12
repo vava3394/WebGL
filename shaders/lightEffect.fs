@@ -77,8 +77,8 @@ vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
   float IN = max(0.0,dot(i,n));
   float ON = max(0.0,dot(o,n));
 
-  float brdf = (F*D*G)/(4.0*IN*ON);
-  return ((1.0-F)*(Kd/PI)+brdf);
+  float fs = (F*D*G)/(4.0*IN*ON);
+  return (((1.0-F)*(Kd/PI))+fs);
 }
 
 
@@ -97,7 +97,7 @@ void main() {
   if(uIsCookerTorrance){
     vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
     float cosThetaI = max(0.0,dot(i,n));
-    gl_FragColor = vec4((uLight.color*cookTorrance*cosThetaI)+(Kd/PI),1.0);
+    gl_FragColor = vec4((uLight.color*cookTorrance*cosThetaI)*2.,1.0);
   }
 
   else if (uIsMirroir && uIsTransparence){
