@@ -1,8 +1,9 @@
 
 let tabObj = [];
 
-var ni = 1.3;
-var sigma = 0.01;
+var ni;
+var sigma;
+var intensiteLumineuse;
 // =====================================================
 var isMirroir = false;
 var isTransparence = false;
@@ -57,6 +58,8 @@ class objmesh {
 
 		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.pos'),LIGHT.position);
 		gl.uniform3fv(gl.getUniformLocation(this.shader,'uLight.color'),LIGHT.color);
+
+		gl.uniform1f(gl.getUniformLocation(this.shader,"uIntensiteLumineuse"),intensiteLumineuse);
 
 
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uNi");

@@ -51,7 +51,15 @@
                             </select>
                         </div>
 
-                        <div class="setting-slider" id="val">
+                        <div class="setting-color" id="val">
+                            <label for="colorpicker" style="margin-left: 10px;">Couleur de l'objet</label>
+                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
+                            <br /> <br />
+                            <label for="colorpicker" style="margin-left: 10px;">Couleur lumière</label>
+                            <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                        </div>
+
+                        <div class="setting-check-box" id="val">
                             <div class="setting-check-mirroir" id="val">
                                 <label for="mirroir">Miroir</label>
                                 <input type="checkbox" id="mirroir" onchange="setIsMirroir(this.checked)"/>
@@ -64,43 +72,58 @@
                                 <label for="transparence">Transparence</label>
                                 <input type="checkbox" id="transparence" onchange="setIsTransparence(this.checked)" />
                             </div>
-                            <label for="indices" id="val">Indices de réfraction</label>
-                            <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="myRange" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
-                            <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="myInput" step="0.1" onchange="handleNi(this.value)" />
+                        </div>
+
+                        <div class="setting-slider" id="val">
+                            <div>
+                                <label for="indices" id="val">Indices de réfraction</label>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeNi" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
+                                <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputNi" step="0.1" onchange="handleNi(this.value)" />
+                            </div>
+                            <br/>
                             <div>
                                 <label for="indices" id="val">Sigma</label> </br>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.01" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
-                                <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
-                            </div>                         
+                                <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
+                            </div>
+                            <br/>
                             <div>
-                                <label for="colorpicker" style="margin-left: 10px;">Couleur de l'objet</label>
-                                <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
-                                <br /> <br />
-                                <label for="colorpicker" style="margin-left: 10px;">Couleur lumière</label>
-                                <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                                <label for="indices" id="val">Intesité lumineuse</label> </br>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeIntensite" value="1" min="0.5" max="10" step="0.1" oninput="handleIntensiteLumineuse(this.value)" />
+                                <input type="number" value="1" min="0.5" max="10" style="margin-left: 10px;" id="inputIntensite" step="0.1" onchange="handleIntensiteLumineuse(this.value)" />
                             </div>
                         </div>
+                    </div>
                 </ul>
             </nav>
         </div>
     </body>
 
     <script>
-        var slider = document.getElementById("myRange");
+        var sliderNi = document.getElementById("rangeNi");
+        var inputNi = document.getElementById("inputNi");
         var sliderSigma = document.getElementById("rangeSigma");
         var inputSigma = document.getElementById("inputSigma");
-        var input = document.getElementById("myInput");
+        var sliderIntensite = document.getElementById("rangeIntensite");
+        var inputIntensite = document.getElementById("inputIntensite");
+        
 
         const handleNi = (value) => {
             setNi(value);
-            slider.value = value;
-            input.value = value;
+            sliderNi.value = value;
+            inputNi.value = value;
         };
 
         const handleSigma = (value) => {
             setSigma(value);
             sliderSigma.value=value;
             inputSigma.value=value;
+        }
+
+        const handleIntensiteLumineuse = (value) => {
+            setIntensiteLumineuse(value);
+            sliderIntensite.value = value;
+            inputIntensite.value = value;
         }
 
         const hexToRgb = (hex) =>
@@ -124,9 +147,10 @@
             console.log(LIGHT.color)
         }
 
-        // 1.3 par defaut
+        // valeur par defaut
         handleNi(1.5);
         handleSigma(0.1);
+        handleIntensiteLumineuse(1.0);
         setIsCooker(true);
         document.querySelector(".open-menu-btn").addEventListener("click", function () {
         if (document.querySelector("body").classList.contains("closed-menu")) {

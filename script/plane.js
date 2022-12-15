@@ -18,10 +18,10 @@ class plane {
 	initAll() {
 		var size=1.0;
 		var vertices = [
-			-size, -size, 0.1,
-			 size, -size, 0.1,
-			 size, size, 0.1,
-			-size, size, 0.1
+			-size, -size, 0.,
+			 size, -size, 0.,
+			 size, size, 0.,
+			-size, size, 0.
 		];
 
 		var texcoords = [
