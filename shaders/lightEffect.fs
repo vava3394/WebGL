@@ -19,18 +19,19 @@ uniform float uNi;
 uniform bool uIsMirroir;
 uniform bool uIsTransparence;
 uniform bool uIsCookerTorrance;
-uniform bool uIsEchantillonnage;
-uniform float uNbIteration;
 uniform vec3 uColorObj;
 uniform float usigma;
+uniform float uIntensiteLumineuse;
 uniform Light uLight;
+
+float myDot(vec3 a, vec3 b){
+  return max(0.0,dot(a,b));
+}
 
 float coefFrenel(vec3 i, vec3 m){
   //Facteur de Fresnel
-  float c = dot(i,m);
-  if(c<=0.0){
-    return 0.0;
-  }
+  float c = myDot(i,m);
+
   float g = sqrt(uNi*uNi+c*c-1.0);
   float gmc = g-c;
   float gpc = g+c;
@@ -39,26 +40,26 @@ float coefFrenel(vec3 i, vec3 m){
   return 0.5*((gmc*gmc)/(gpc*gpc))*(1.0+(cgpc*cgpc)/(cgmc*cgmc));
 }
 
-float coefBeckmann(vec3 m,vec3 vecN)
+float coefBeckmann(vec3 m,vec3 n)
 {
 
-	float sigma = usigma*usigma;
-	float cosTheta = dot(vecN,m);
+	float sigmaCarre = usigma*usigma;
+	float cosTheta = myDot(n,m);
 	float cos2Theta = cosTheta*cosTheta;
 	float cos4Theta = cos2Theta*cos2Theta;
 	float tan2Theta = (1. - cos2Theta) / cos2Theta;
 
-	float f1 = exp(-tan2Theta / (2.0 * sigma));
-	float f2 = PI * sigma * cos4Theta;
+	float f1 = exp(-tan2Theta / (2.0 * sigmaCarre));
+	float f2 = PI * sigmaCarre * cos4Theta;
 	return (1.0 / f2) * f1;
 }
 
-float coefOmbrage(vec3 vecN, vec3 m, vec3 vecO, vec3 i){
-  float NM = max(0.0,dot(vecN,m));
-  float NO = max(0.0,dot(vecN,vecO));
-  float OM = max(0.0,dot(vecO,m));
-  float NI = max(0.0,dot(vecN,i));
-  float IM = max(0.0,dot(i,m));
+float coefOmbrage(vec3 n, vec3 m, vec3 o, vec3 i){
+  float NM = myDot(n,m);
+  float NO = myDot(n,o);
+  float OM = myDot(o,m);
+  float NI = myDot(n,i);
+  float IM = myDot(i,m);
 
   float val1 = (2.0*NM*NO)/OM;
   float val2 = (2.0*NM*NI)/IM;
@@ -66,111 +67,55 @@ float coefOmbrage(vec3 vecN, vec3 m, vec3 vecO, vec3 i){
   return min(1.0,min(val1,val2));
 }
 
-vec3 getM(vec3 vecO, vec3 i){
-  return normalize(i+vecO);
+vec3 getNormalMicroFacette(vec3 o, vec3 i){
+  return normalize(i+o);
 }
 
-vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 vecO, vec3 vecN, vec3 m){
+vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n){
+  vec3 m = getNormalMicroFacette(o,i);
   float F = coefFrenel(i, m);
-  float D = coefBeckmann(m,vecN);
-  float G = coefOmbrage(vecN, m, vecO, i);
+  float D = coefBeckmann(m,n);
+  float G = coefOmbrage(n, m, o, i);
 
-  float IN = dot(i,vecN);
-  float ON = dot(vecO,vecN);
+  float IN = myDot(i,n);
+  float ON = myDot(o,n);
 
-  float brdf = (F*D*G)/(4.0*IN*ON);
-  
-  return (1.0-F)*(Kd/PI)+brdf;
-}
-
-float random(in vec2 uv){
-	return fract(sin(dot(uv, vec2(12.9898,78.233)))* 43758.5453);
-}
-
-vec3 rotZ(in vec3 v, float ang){
-	vec4 rot = vec4(cos(ang), sin(ang), 0., 1.);
-	rot.w = -rot.y;
-	return vec3(dot(rot.xwz, v), dot(rot.yxz, v), v.z);
-}
-
-vec3 rotY(in vec3 v, float ang){
-	vec4 rot = vec4(cos(ang), sin(ang), 0., 1.);
-	rot.w = -rot.y;
-	return vec3(dot(rot.xzy, v), v.y, dot(rot.wzx, v));
+  return (((1.0-F)*(Kd/PI))+(F*D*G)/(4.0*IN*ON));
 }
 
 
-vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO, vec3 vecI){
-  
-  vec3 color = vec3(0.0);
-  float currentIteration = 0.0;
-  for(float i = 0.0; i < 100.0; ++i) {
-    if(i>iter){break;}
-    currentIteration = i;
-
-    float rand1 = random(pos3D.xy + i);
-    float rand2 = random(pos3D.xy + rand1);
-
-    float phi = rand1 * 2.0 * PI;
-    float theta = atan(sqrt(- usigma * usigma * log(1.0 - rand2)));
-
-    float x = sin(theta) * cos(phi);
-    float y = sin(theta) * sin(phi);
-    float z = cos(theta);
-    
-    // vec3 m = vec3(x,y,z);
-
-    vec3 m = normalize(rotZ(vecN,phi));
-    m= normalize(rotY(m,theta));
-    
-    float pdf = coefBeckmann(m,vecN) * cos(theta);
-    vec3 cookTorrance = getCookTorrance(Kd,vecI,vecO,vecN,m);
-
-    color += (cookTorrance/pdf);
-
-  }
-
-  return (color/currentIteration);
-}
 
 void main() {
-  vec3 colorAmbiant = vec3(0.2,0.2,0.2);
-  vec3 color = uColorObj;
+  vec3 colorFinal = uColorObj;
   vec3 Kd = uColorObj;
 
-  vec3 vecN = normalize(N);
-  vec3 vecO = normalize(-pos3D.xyz);
-  vec3 vecI = normalize(uLight.pos-pos3D.xyz);
+  vec3 n = normalize(N);
+  vec3 o = normalize(-pos3D.xyz);
+  vec3 i = normalize(uLight.pos-pos3D.xyz);
   
-  vec3 directionR = (mat3(uInverseRotMatrix)*reflect(-vecO,vecN)).xzy;
-  vec3 directionT = (mat3(uInverseRotMatrix)*refract(-vecO,vecN,1.0/uNi)).xzy;
+  vec3 directionR = (mat3(uInverseRotMatrix)*reflect(-o,n)).xzy;
+  vec3 directionT = (mat3(uInverseRotMatrix)*refract(-o,n,1.0/uNi)).xzy;
 
-
-  if(uIsEchantillonnage){
-    vec3 echantillon = getEchantillonnage(uNbIteration,Kd,vecN,vecO,vecI);
-    float cosThetaI = max(0.0,dot(vecI,vecN));
-    color = (uLight.color*echantillon*cosThetaI)+(Kd/PI);
-  }else if(uIsCookerTorrance){
-    vec3 m = getM(vecO,vecI);
-    vec3 cookTorrance = getCookTorrance(Kd,vecI,vecO,vecN,m);
-    float cosThetaI = max(0.0,dot(vecI,vecN));
-    color = (uLight.color*cookTorrance*cosThetaI);
+  if(uIsCookerTorrance){
+    vec3 cookTorrance = getCookTorrance(Kd,i,o,n);
+    float cosThetaI = myDot(i,n);
+    colorFinal = (uLight.color*cookTorrance*cosThetaI);
   }
 
-  if (uIsMirroir && uIsTransparence){
+  else if (uIsMirroir && uIsTransparence){
     
-    float R = coefFrenel(vecO,vecN);
+    float R = coefFrenel(o,n);
     float T = 1.0 - R;
     vec4 colR = vec4(textureCube(uskybox, directionR).xyz*R,1.0);
     vec4 colT = vec4(textureCube(uskybox, directionT).xyz*T,1.0);
 
-    gl_FragColor = vec4((colT+colR).xyz*color,1);
+    colorFinal = (colT+colR).xyz*colorFinal;
   }else if(uIsMirroir){
-    gl_FragColor = vec4(textureCube(uskybox, directionR).xyz*color,1.0);
+    colorFinal = textureCube(uskybox, directionR).xyz*colorFinal;
   }else if (uIsTransparence){
-    gl_FragColor = vec4(textureCube(uskybox, directionT).xyz*color,1.0);
-  }else{
-    gl_FragColor=vec4(color,1.0);
+    colorFinal = textureCube(uskybox, directionT).xyz*colorFinal;
   }
+    
+  gl_FragColor=vec4(colorFinal*uIntensiteLumineuse,1.0);
 
 }

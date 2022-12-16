@@ -51,99 +51,111 @@
                             </select>
                         </div>
 
-                        <div class="setting-slider" id="val">
+                        <div class="setting-color" id="val">
+                            <label for="colorpicker" style="margin-left: 10px;">Couleur de l'objet</label>
+                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
+                            <br /> <br />
+                            <label for="colorpicker" style="margin-left: 10px;">Couleur lumière</label>
+                            <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                        </div>
+
+                        <div class="setting-check-box" id="val">
                             <div class="setting-check-mirroir" id="val">
                                 <label for="mirroir">Miroir</label>
                                 <input type="checkbox" id="mirroir" onchange="setIsMirroir(this.checked)"/>
                             </div>
-                            <div class="setting-check-cooker" id="val">
-                                <label for="cooker">cooker</label>
-                                <input type="checkbox" id="cooker" onchange="setIsCooker(this.checked)"/>
-                            </div>
-                            <div class="setting-check-echantionnage" id="val">
-                                <label for="transparence">Echantionnage</label>
-                                <input type="checkbox" id="echantionnage" onchange="setIsEchantionnage(this.checked)" checked/>
+                            <div class="setting-check-cook-torrance" id="val">
+                                <label for="cook-torrance">cook-torrance</label>
+                                <input type="checkbox" id="cook-torrance" onchange="setIsCooker(this.checked)"checked/>
                             </div>
                             <div class="setting-check-transparence" id="val">
                                 <label for="transparence">Transparence</label>
                                 <input type="checkbox" id="transparence" onchange="setIsTransparence(this.checked)" />
                             </div>
-                            <label for="indices" id="val">Indices de réfraction</label>
-                            <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="myRange" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
-                            <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="myInput" step="0.1" onchange="handleNi(this.value)" />
-
-                            <label for="indices" id="val">Sigma</label>
-                            <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.0" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
-                            <input type="number" value="1.3" min="1.0" max="3.0"  style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
-                            
-                            <label for="indices" id="val">Echantionnage</label>
-                            <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeEchantionnage" value="0.0" min="0.0" max="1000.0" step="1.0" oninput="handleEchantionnage(this.value)" />
-                            <input type="number" value="0.0" min="0.0" max="1000.0"  style="margin-left: 10px;" id="inputEchantionnage" step="1.0" onchange="handleEchantionnage(this.value)" />
-
-                            <br /> <br /><label for="colorpicker" style="margin-left: 10px;">Choisie ta couleur </label>
-                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
-                            <input type="color" id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
                         </div>
+
+                        <div class="setting-slider" id="val">
+                            <div>
+                                <label for="indices" id="val">Indices de réfraction</label>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeNi" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
+                                <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputNi" step="0.1" onchange="handleNi(this.value)" />
+                            </div>
+                            <br/>
+                            <div>
+                                <label for="indices" id="val">Sigma</label> </br>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.01" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
+                                <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
+                            </div>
+                            <br/>
+                            <div>
+                                <label for="indices" id="val">Intesité lumineuse</label> </br>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeIntensite" value="1" min="0.5" max="10" step="0.1" oninput="handleIntensiteLumineuse(this.value)" />
+                                <input type="number" value="1" min="0.5" max="10" style="margin-left: 10px;" id="inputIntensite" step="0.1" onchange="handleIntensiteLumineuse(this.value)" />
+                            </div>
+                        </div>
+                    </div>
                 </ul>
             </nav>
         </div>
     </body>
 
     <script>
-                    var sliderEchantionnage = document.getElementById("rangeEchantionnage");
-                    var inputEchantionnage = document.getElementById("inputEchantionnage");
-                    var sliderSigma = document.getElementById("rangeSigma");
-                    var inputSigma = document.getElementById("inputSigma");
-                    var slider = document.getElementById("myRange");
-                    var input = document.getElementById("myInput");
+        var sliderNi = document.getElementById("rangeNi");
+        var inputNi = document.getElementById("inputNi");
+        var sliderSigma = document.getElementById("rangeSigma");
+        var inputSigma = document.getElementById("inputSigma");
+        var sliderIntensite = document.getElementById("rangeIntensite");
+        var inputIntensite = document.getElementById("inputIntensite");
+        
 
-                    const handleEchantionnage = (value) => {
-                        setIterationEchantionnage(value);
-                        sliderEchantionnage.value = value;
-                        inputEchantionnage.value = value;
-                    }
+        const handleNi = (value) => {
+            setNi(value);
+            sliderNi.value = value;
+            inputNi.value = value;
+        };
 
-                    const handleNi = (value) => {
-                        setNi(value);
-                        slider.value = value;
-                        input.value = value;
-                    };
+        const handleSigma = (value) => {
+            setSigma(value);
+            sliderSigma.value=value;
+            inputSigma.value=value;
+        }
 
-                    const handleSigma = (value) => {
-                        setSigma(value);
-                        sliderSigma.value=value;
-                        inputSigma.value=value;
-                    }
+        const handleIntensiteLumineuse = (value) => {
+            setIntensiteLumineuse(value);
+            sliderIntensite.value = value;
+            inputIntensite.value = value;
+        }
 
-                    const hexToRgb = (hex) =>
-                        hex
-                            .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => "#" + r + r + g + g + b + b)
-                            .substring(1)
-                            .match(/.{2}/g)
-                            .map((x) => parseInt(x, 16));
+        const hexToRgb = (hex) =>
+            hex
+                .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => "#" + r + r + g + g + b + b)
+                .substring(1)
+                .match(/.{2}/g)
+                .map((x) => parseInt(x, 16));
 
-                    function handleColor(ev) {
-                        const color = ev.target.value;
-                        colors = hexToRgb(color);
-                        colors = colors.map((element) => (element = element / 255));
-                    }
+        function handleColor(ev) {
+            const color = ev.target.value;
+            colors = hexToRgb(color);
+            colors = colors.map((element) => (element = element / 255));
+            console.log(colors)
+        }
 
-                    function handleLightColor(ev) {
-                        const color = ev.target.value;
-                        LIGHT.color = hexToRgb(color);
-                        LIGHT.color = LIGHT.color.map((element) => (element = element / 255));
-                    }
+        function handleLightColor(ev) {
+            const color = ev.target.value;
+            LIGHT.color = hexToRgb(color);
+            LIGHT.color = LIGHT.color.map((element) => (element = element / 255));
+            console.log(LIGHT.color)
+        }
 
-                    // parametre par default
-                    handleNi(1.5);
-                    handleSigma(0.1);
-                    setIsEchantionnage(true);
-                    handleEchantionnage(90.0);
-                    //-------------------------
-                    document.querySelector(".open-menu-btn").addEventListener("click", function () {
-                    if (document.querySelector("body").classList.contains("closed-menu")) {
-                        document.querySelector("body").classList.remove("closed-menu");
-                    } else document.querySelector("body").classList.add("closed-menu");
-                });
+        // valeur par defaut
+        handleNi(1.5);
+        handleSigma(0.1);
+        handleIntensiteLumineuse(1.0);
+        setIsCooker(true);
+        document.querySelector(".open-menu-btn").addEventListener("click", function () {
+        if (document.querySelector("body").classList.contains("closed-menu")) {
+            document.querySelector("body").classList.remove("closed-menu");
+        } else document.querySelector("body").classList.add("closed-menu");
+    });
     </script>
 </html>

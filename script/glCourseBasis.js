@@ -198,6 +198,10 @@ function setSigma(value){
 	sigma = value;
 }
 
+function setIntensiteLumineuse(value){
+	intensiteLumineuse = value;
+}
+
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
