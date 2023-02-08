@@ -4,6 +4,7 @@ let tabObj = [];
 var ni = 1.3;
 var sigma = 0.01;
 var nbIteration = 90.0;
+var intensiteLumineuse = 1.0;
 // =====================================================
 var isMirroir = false;
 var isTransparence = false;
@@ -62,6 +63,8 @@ class objmesh {
 
 		gl.uniform1f(gl.getUniformLocation(this.shader,"uNbIteration"),nbIteration);
 		gl.uniform1i(gl.getUniformLocation(this.shader,"uIsEchantillonnage"),isEchantionnage);
+
+		gl.uniform1f(gl.getUniformLocation(this.shader,"uIntensiteLumineuse"),intensiteLumineuse);
 
 		this.shader.ratio = gl.getUniformLocation(this.shader, "uNi");
 		var skyboxLocation = gl.getUniformLocation(this.shader, "uskybox");

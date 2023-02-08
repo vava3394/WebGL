@@ -47,7 +47,7 @@
                                 <option value="1">Sphere</option>
                                 <option value="2">Porsche</option>
                                 <option value="3">Mustang</option>
-                                <option value="4" >cube</option>
+                                <option value="4">cube</option>
                             </select>
                         </div>
 
@@ -66,11 +66,15 @@
                             </div>
                             <div class="setting-check-cook-torrance" id="val">
                                 <label for="cook-torrance">cook-torrance</label>
-                                <input type="checkbox" id="cook-torrance" onchange="setIsCooker(this.checked)"checked/>
+                                <input type="checkbox" id="cook-torrance" onchange="setIsCooker(this.checked)"/>
                             </div>
                             <div class="setting-check-transparence" id="val">
                                 <label for="transparence">Transparence</label>
                                 <input type="checkbox" id="transparence" onchange="setIsTransparence(this.checked)" />
+                            </div>
+                            <div class="setting-check-echantion" id="val">
+                                <label for="echantion">echantion</label>
+                                <input type="checkbox" id="echantion" onchange="setIsEchantion(this.checked)" checked/>
                             </div>
                         </div>
 
@@ -83,7 +87,7 @@
                             <br/>
                             <div>
                                 <label for="indices" id="val">Sigma</label> </br>
-                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.01" min="0.01" max="0.5" step="0.01" oninput="handleSigma(this.value)" />
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.0001" min="0.0001" max="0.5" step="0.0001" oninput="handleSigma(this.value)" />
                                 <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
                             </div>
                             <br/>
@@ -91,6 +95,11 @@
                                 <label for="indices" id="val">Intesité lumineuse</label> </br>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeIntensite" value="1" min="0.5" max="10" step="0.1" oninput="handleIntensiteLumineuse(this.value)" />
                                 <input type="number" value="1" min="0.5" max="10" style="margin-left: 10px;" id="inputIntensite" step="0.1" onchange="handleIntensiteLumineuse(this.value)" />
+                            </div>
+                            <div>
+                                <label for="indices" id="val">nombre échantion</label> </br>
+                                <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeNbEchantion" value="1" min="1" max="100" step="1" oninput="handleNbEchantion(this.value)" />
+                                <input type="number" value="1" min="1" max="100" style="margin-left: 10px;" id="inputNbEchantion" step="1" onchange="handleNbEchantion(this.value)" />
                             </div>
                         </div>
                     </div>
@@ -106,6 +115,8 @@
         var inputSigma = document.getElementById("inputSigma");
         var sliderIntensite = document.getElementById("rangeIntensite");
         var inputIntensite = document.getElementById("inputIntensite");
+        var sliderNbEchantion = document.getElementById("rangeNbEchantion");
+        var inputNbEchantion = document.getElementById("inputNbEchantion");
         
 
         const handleNi = (value) => {
@@ -124,6 +135,12 @@
             setIntensiteLumineuse(value);
             sliderIntensite.value = value;
             inputIntensite.value = value;
+        }
+
+        const handleNbEchantion = (value) => {
+            setNbEchantion(value);
+            sliderNbEchantion.value = value;
+            inputNbEchantion.value = value;
         }
 
         const hexToRgb = (hex) =>
@@ -149,9 +166,10 @@
 
         // valeur par defaut
         handleNi(1.5);
-        handleSigma(0.1);
+        handleSigma(0.0001);
         handleIntensiteLumineuse(1.0);
-        setIsCooker(true);
+        setNbEchantion(1);
+        setIsEchantion(true);
         document.querySelector(".open-menu-btn").addEventListener("click", function () {
         if (document.querySelector("body").classList.contains("closed-menu")) {
             document.querySelector("body").classList.remove("closed-menu");

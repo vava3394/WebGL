@@ -153,7 +153,7 @@ function webGLStart() {
 	tabObj.push(new objmesh('objs/cube.obj','lightEffect'));
 	tabObj.push(new objmesh('objs/Lara_Croft.obj','lightEffect'));
 
-	obj = tabObj[0];
+	obj = tabObj[1];
 	
 	tick();
 }
@@ -183,6 +183,10 @@ function setIsEchantionnage(value){
 	isEchantionnage = value;
 }
 
+function setIsEchantion(value){
+	isEchantionnage = value;
+}
+
 // =====================================================
 function setIterationEchantionnage(value){
 	nbIteration = value;
@@ -200,6 +204,10 @@ function setSigma(value){
 
 function setIntensiteLumineuse(value){
 	intensiteLumineuse = value;
+}
+
+function setNbEchantion(value){
+	nbIteration = value
 }
 
 // =====================================================
