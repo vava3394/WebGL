@@ -88,7 +88,7 @@ float random(in vec2 uv){
 	return fract(sin(dot(uv, vec2(12.9898,78.233)))* 43758.5453);
 }
 
-vec3 rotate(vec3 m, vec3 N){
+mat3 rotate(vec3 N){
   vec3 i = vec3(1.0,0.0,0.0);
 
   if(myDot(i,N)> 0.9){
@@ -96,17 +96,18 @@ vec3 rotate(vec3 m, vec3 N){
   }
   vec3 j = cross(N,i);
   i = cross(j,N);
-  return (mat3(i,j,N)*m);
+  return mat3(i,j,N);
 }
 
 vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO){
   
   vec3 color = vec3(0.0);
-  float currentIteration = 0.0;
+  mat3 rotateM = rotate(vecN);
+  float nbContinue = 0.0;
+  int nbIter = 0;
 
   for(float i = 0.0; i < 100.0; ++i) {
     if(i>=iter){break;}
-    currentIteration = i;
 
     float rand1 = random(pos3D.xy + i);
     float rand2 = random(pos3D.xy + rand1);
@@ -119,37 +120,36 @@ vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO){
     float z = cos(theta);
     
     vec3 m = vec3(x,y,z);
-    m = rotate(m,vecN);
+    m = rotateM * m;
     m = normalize(m);
-
-    float D = coefBeckmann(m,vecN);
+    
     float cosThetaM = myDot(m,vecN);
-
-
-
-    float pdf = D*cosThetaM; 
 
     vec3 Icam = reflect(-vecO,m);
     float IN = myDot(Icam,vecN);
 
-    vec3 Iobj = mat3(uInverseRotMatrix)*Icam;
-    //vec3 vecI = normalize(mat3(uInverseRotMatrix)*reflect(-vecO,m)).xzy;
-    vec3 colorFinal = textureCube(uskybox, Iobj).xyz;
-
-    float F = coefFrenel(Icam,m);
-    float G = coefOmbrage(vecN,m,vecO,Icam);
-    //float IN = myDot(vecI,vecN);
     float ON = myDot(vecO,vecN);
 
-    //vec3 brdf = (((1.0-F)*(Kd/PI))+(F*D*G)/(4.0*IN*ON));
+    float eps = 0.001;
 
-    vec3 brdf = vec3((F*D*G)/(4.0*IN*ON));
+    if(cosThetaM<eps || IN<eps || ON<eps) {
+      continue;
+    } else {
+      float F = coefFrenel(Icam,m);
+      float D = coefBeckmann(m,vecN);
+      float G = coefOmbrage(vecN,m,vecO,Icam);
+      float pdf = D*cosThetaM; 
+      vec3 Iobj = (mat3(uInverseRotMatrix)*Icam).xzy;
+      vec3 colorFinal = textureCube(uskybox, Iobj).xyz;
 
-    color += colorFinal*brdf*IN/pdf;
-
+      float brdf = (F*D*G)/(4.0*IN*ON);
+      
+      color += colorFinal*brdf*IN/pdf;
+      nbIter++;
+    }    
   }
 
-  return (color/iter);
+  return (color/float(nbIter));
 }
 
 
