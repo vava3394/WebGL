@@ -59,7 +59,20 @@
                             <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
                         </div>
 
-                        <div class="setting-check-box" id="val">
+
+                        <div class="setting-select-objet" id="val">
+                            <label for="select-obj" style="margin-left: 10px;">Propriétés</label>
+                            <select id="select-obj" onchange="handleChanceProps(this.value)">
+                                <option value="0">Miroir</option>
+                                <option value="1">Miroir avec transparence</option>
+                                <option value="2">Cook et torrance</option>
+                                <option value="3">Transparence</option>
+                                <option value="4">Miroir poli</option>
+                                <option value="5" selected>Echantillonnage d'importance </option>
+                            </select>
+                        </div>
+
+                        <!-- <div class="setting-check-box" id="val">
                             <div class="setting-check-mirroir" id="val">
                                 <label for="mirroir">Miroir</label>
                                 <input type="checkbox" id="mirroir" onchange="setIsMirroir(this.checked)"/>
@@ -76,7 +89,7 @@
                                 <label for="echantion">echantion</label>
                                 <input type="checkbox" id="echantion" onchange="setIsEchantion(this.checked)" checked/>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="setting-slider" id="val">
                             <div>
@@ -142,6 +155,34 @@
             sliderNbEchantion.value = value;
             inputNbEchantion.value = value;
         }
+
+
+        const handleChanceProps = (value) =>{
+
+            switch(value){
+                case 0:
+                    setIsMirroir(this.checked)
+                break;
+                case 1:
+                    setIsMirroir(this.checked)
+                break;
+                case 2:
+                    setIsCooker(this.checked)
+                break;
+                case 3:
+                setIsTransparence(this.checked)
+                break;
+                case 4:
+                setIsEchantion(this.checked)
+                break;
+                case 5:
+                setIsEchantion(this.checked)
+                break;
+                default: 
+                setIsEchantion(this.checked)
+            }
+        }
+
 
         const hexToRgb = (hex) =>
             hex
