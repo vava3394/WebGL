@@ -62,12 +62,12 @@
 
                         <div class="setting-select-objet" id="val">
                             <label for="select-obj" style="margin-left: 10px;">Propriétés</label>
-                            <select id="select-obj" onchange="handleChanceProps(this.value)">
+                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChanceProps(this.value)">
                                 <option value="0">Miroir</option>
                                 <option value="1">Miroir avec transparence</option>
                                 <option value="2">Cook et torrance</option>
                                 <option value="3">Transparence</option>
-                                <option value="4">Miroir poli</option>
+                                <option value="4">Miroir dépoli</option>
                                 <option value="5" selected>Echantillonnage d'importance </option>
                             </select>
                         </div>
@@ -161,25 +161,27 @@
 
             switch(value){
                 case 0:
-                    setIsMirroir(this.checked)
-                break;
+                    setIsMirroir(true)
+                    break;
                 case 1:
-                    setIsMirroir(this.checked)
-                break;
+                    setIsMirroir(true)
+                    break;
                 case 2:
-                    setIsCooker(this.checked)
-                break;
+                    setIsCooker(true)
+                    break;
                 case 3:
-                setIsTransparence(this.checked)
-                break;
+                    setIsTransparence(true)
+                    break;
                 case 4:
-                setIsEchantion(this.checked)
-                break;
+                    setIsEchantion(true)
+                    break;
                 case 5:
-                setIsEchantion(this.checked)
-                break;
+                    console.log("zzzzzzzzzzzzzzzz");
+                    setIsEchantion(true)
+                    break;
+                
                 default: 
-                setIsEchantion(this.checked)
+                    setIsEchantion(true)
             }
         }
 
