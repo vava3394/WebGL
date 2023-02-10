@@ -165,42 +165,25 @@ function setObj(value) {
 
 // =====================================================
 function setIsMirroir(value) {
-    isEchantionnage = !value;
-    isCookerTorrance = !value;
-    isTransparence = !value;
     isMirroir = value;
+}
+
+function setIsMiroirDePoli(value){
+	isMiroirDePoli = value;
 }
 
 // =====================================================
 function setIsCooker(value) {
-    isTransparence = !value;
-    isEchantionnage = !value;
-    isMirroir = !value;
-
     isCookerTorrance = value;
 }
 
 // =====================================================
 function setIsTransparence(value) {
-    isCookerTorrance = !value;
-    isEchantionnage = !value;
-    isMirroir = !value;
-
     isTransparence = value;
 }
 
 // =====================================================
-function setIsEchantionnage(value) {
-    isEchantionnage = value;
-}
-
 function setIsEchantion(value) {
-    isTransparence = !value;
-    isCookerTorrance = !value;
-    isMirroir = !value;
-
-    console.log("********************", value);
-
     isEchantionnage = value;
 }
 

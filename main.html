@@ -63,33 +63,14 @@
                         <div class="setting-select-objet" id="val">
                             <label for="select-obj" style="margin-left: 10px;">Propriétés</label>
                             <select id="select-obj" style="margin-top: 10px;" onchange="handleChanceProps(this.value)">
-                                <option value="0">Miroir</option>
-                                <option value="1">Miroir avec transparence</option>
-                                <option value="2">Cook et torrance</option>
-                                <option value="3">Transparence</option>
-                                <option value="4">Miroir dépoli</option>
-                                <option value="5" selected>Echantillonnage d'importance </option>
+                                <option value=0>Miroir</option>
+                                <option value=1>Miroir avec transparence</option>
+                                <option value=2>Cook et torrance</option>
+                                <option value=3>Transparence</option>
+                                <option value=4>Miroir dépoli</option>
+                                <option value=5 selected>Echantillonnage d'importance </option>
                             </select>
                         </div>
-
-                        <!-- <div class="setting-check-box" id="val">
-                            <div class="setting-check-mirroir" id="val">
-                                <label for="mirroir">Miroir</label>
-                                <input type="checkbox" id="mirroir" onchange="setIsMirroir(this.checked)"/>
-                            </div>
-                            <div class="setting-check-cook-torrance" id="val">
-                                <label for="cook-torrance">cook-torrance</label>
-                                <input type="checkbox" id="cook-torrance" onchange="setIsCooker(this.checked)"/>
-                            </div>
-                            <div class="setting-check-transparence" id="val">
-                                <label for="transparence">Transparence</label>
-                                <input type="checkbox" id="transparence" onchange="setIsTransparence(this.checked)" />
-                            </div>
-                            <div class="setting-check-echantion" id="val">
-                                <label for="echantion">echantion</label>
-                                <input type="checkbox" id="echantion" onchange="setIsEchantion(this.checked)" checked/>
-                            </div>
-                        </div> -->
 
                         <div class="setting-slider" id="val">
                             <div>
@@ -158,30 +139,56 @@
 
 
         const handleChanceProps = (value) =>{
-
             switch(value){
-                case 0:
+                case "0":
                     setIsMirroir(true)
+                    setIsTransparence(false)
+                    setIsCooker(false)
+                    setIsEchantion(false)
+                    setIsMiroirDePoli(false)
                     break;
-                case 1:
+                case "1":
                     setIsMirroir(true)
-                    break;
-                case 2:
-                    setIsCooker(true)
-                    break;
-                case 3:
                     setIsTransparence(true)
+                    setIsCooker(false)
+                    setIsEchantion(false)
+                    setIsMiroirDePoli(false)
                     break;
-                case 4:
-                    setIsEchantion(true)
+                case "2":
+                    setIsMirroir(false)
+                    setIsTransparence(false)
+                    setIsCooker(true)
+                    setIsEchantion(false)
+                    setIsMiroirDePoli(false)
                     break;
-                case 5:
-                    console.log("zzzzzzzzzzzzzzzz");
+                case "3":
+                    setIsMirroir(false)
+                    setIsTransparence(true)
+                    setIsCooker(false)
+                    setIsEchantion(false)
+                    setIsMiroirDePoli(false)
+                    break;
+                case "4":
+                    setIsMirroir(false)
+                    setIsTransparence(false)
+                    setIsCooker(false)
                     setIsEchantion(true)
+                    setIsMiroirDePoli(true)
+                    break;
+                case "5":
+                    setIsMirroir(false)
+                    setIsTransparence(false)
+                    setIsCooker(false)
+                    setIsEchantion(true)
+                    setIsMiroirDePoli(false)
                     break;
                 
                 default: 
+                    setIsMirroir(false)
+                    setIsTransparence(false)
+                    setIsCooker(false)
                     setIsEchantion(true)
+                    setIsMiroirDePoli(false)
             }
         }
 
