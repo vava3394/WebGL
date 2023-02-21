@@ -62,13 +62,21 @@
 
                         <div class="setting-select-objet" id="val">
                             <label for="select-obj" style="margin-left: 10px;">Propriétés</label>
-                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChanceProps(this.value)">
+                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChangeProps(this.value)">
                                 <option value=0>Miroir</option>
                                 <option value=1>Miroir avec transparence</option>
                                 <option value=2>Cook et torrance</option>
                                 <option value=3>Transparence</option>
-                                <option value=4>Miroir dépoli</option>
-                                <option value=5 selected>Echantillonnage d'importance </option>
+                                <option value=4 selected>Miroir dépoli</option>
+                                <option value=5>Echantillonnage d'importance </option>
+                            </select>
+                        </div>
+
+                        <div class="setting-select-objet" id="val">
+                            <label for="select-obj" style="margin-left: 10px;">Bonus</label>
+                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChangeBonusProps(this.value)">
+                                <option value=0>Beckman</option>
+                                <option value=1>GGX</option>
                             </select>
                         </div>
 
@@ -137,58 +145,67 @@
             inputNbEchantion.value = value;
         }
 
+        const handleChangeBonusProps = (value) =>{
+            switch(value){
+                case "0":
+                    setIsWalterGGX(false);
+                    break;
+                case "1":
+                    setIsWalterGGX(true);
+                    break;
+            }
+        }
 
-        const handleChanceProps = (value) =>{
+        const handleChangeProps = (value) =>{
             switch(value){
                 case "0":
                     setIsMirroir(true)
                     setIsTransparence(false)
                     setIsCooker(false)
-                    setIsEchantion(false)
+                    setIsEchantillon(false)
                     setIsMiroirDePoli(false)
                     break;
                 case "1":
                     setIsMirroir(true)
                     setIsTransparence(true)
                     setIsCooker(false)
-                    setIsEchantion(false)
+                    setIsEchantillon(false)
                     setIsMiroirDePoli(false)
                     break;
                 case "2":
                     setIsMirroir(false)
                     setIsTransparence(false)
                     setIsCooker(true)
-                    setIsEchantion(false)
+                    setIsEchantillon(false)
                     setIsMiroirDePoli(false)
                     break;
                 case "3":
                     setIsMirroir(false)
                     setIsTransparence(true)
                     setIsCooker(false)
-                    setIsEchantion(false)
+                    setIsEchantillon(false)
                     setIsMiroirDePoli(false)
                     break;
                 case "4":
                     setIsMirroir(false)
                     setIsTransparence(false)
                     setIsCooker(false)
-                    setIsEchantion(true)
+                    setIsEchantillon(true)
                     setIsMiroirDePoli(true)
                     break;
                 case "5":
                     setIsMirroir(false)
                     setIsTransparence(false)
                     setIsCooker(false)
-                    setIsEchantion(true)
+                    setIsEchantillon(true)
                     setIsMiroirDePoli(false)
                     break;
-                
                 default: 
                     setIsMirroir(false)
                     setIsTransparence(false)
                     setIsCooker(false)
-                    setIsEchantion(true)
-                    setIsMiroirDePoli(false)
+                    setIsEchantillon(true)
+                    setIsMiroirDePoli(true)
             }
         }
 
@@ -219,7 +236,8 @@
         handleSigma(0.0001);
         handleIntensiteLumineuse(1.0);
         setNbEchantion(1);
-        setIsEchantion(true);
+        setIsEchantillon(true);
+        handleChangeProps("4");
         document.querySelector(".open-menu-btn").addEventListener("click", function () {
         if (document.querySelector("body").classList.contains("closed-menu")) {
             document.querySelector("body").classList.remove("closed-menu");

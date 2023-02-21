@@ -183,7 +183,7 @@ function setIsTransparence(value) {
 }
 
 // =====================================================
-function setIsEchantion(value) {
+function setIsEchantillon(value) {
     isEchantionnage = value;
 }
 
@@ -208,6 +208,10 @@ function setIntensiteLumineuse(value) {
 
 function setNbEchantion(value) {
     nbIteration = value;
+}
+
+function setIsWalterGGX(value){
+	isWalterGGX = value;
 }
 
 // =====================================================

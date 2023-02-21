@@ -20,7 +20,8 @@ uniform bool uIsMirroir;
 uniform bool uIsTransparence;
 uniform bool uIsCookerTorrance;
 uniform bool uIsEchantillonnage;
-uniform bool uisMiroirDePoli;
+uniform bool uIsMiroirDepoli;
+uniform bool uIsWalterGGX;
 uniform vec3 uColorObj;
 uniform float usigma;
 uniform float uIntensiteLumineuse;
@@ -41,6 +42,28 @@ float coefFrenel(vec3 i, vec3 m){
   float cgpc = c*(gpc)-1.0;
   float cgmc = c*(gmc)+1.0;
   return 0.5*((gmc*gmc)/(gpc*gpc))*(1.0+(cgpc*cgpc)/(cgmc*cgmc));
+}
+
+float coefDistibutionGGX(vec3 m, vec3 n){
+  float sigmaCarre = usigma*usigma;
+  float cosTheta = myDot(n,m);
+	float cos2Theta = cosTheta*cosTheta;
+	float cos4Theta = cos2Theta*cos2Theta;
+  float tan2Theta = (1. - cos2Theta) / cos2Theta;
+
+  float f1 = PI*cos4Theta;
+  float f2 = (sigmaCarre + tan2Theta) * (sigmaCarre + tan2Theta);
+
+  return sigmaCarre/(f1*f2);
+}
+
+float coefOmbrageGGX(float cosThetaV){
+  float sigmaCarre = usigma*usigma;
+  float cos2Theta = cosThetaV*cosThetaV;
+  float tan2Theta = (1. - cos2Theta) / cos2Theta;
+  float racine = sqrt(1.0+sigmaCarre*tan2Theta);
+
+  return 2.0/(1.0+racine);
 }
 
 float coefBeckmann(vec3 m,vec3 n)
@@ -75,9 +98,16 @@ vec3 getNormalMicroFacette(vec3 o, vec3 i){
 
 vec3 getCookTorrance(vec3 Kd, vec3 i, vec3 o,vec3 n,vec3 m){
   float F = coefFrenel(i, m);
-  float D = coefBeckmann(m,n);
-  float G = coefOmbrage(n, m, o, i);
-
+  float D;
+  float G;
+  if(!uIsWalterGGX){
+    D = coefBeckmann(m,n);
+    G = coefOmbrage(n, m, o, i);
+  }else{
+    D = coefDistibutionGGX(m,n);
+    G = coefOmbrageGGX(myDot(o,m))*coefOmbrageGGX(myDot(i,m));
+  }
+  
   float IN = myDot(i,n);
   float ON = myDot(o,n);
 
@@ -100,7 +130,7 @@ mat3 rotate(vec3 N){
   return mat3(i,j,N);
 }
 
-vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO){
+vec3 getEchantillonnage(float iter, vec3 vecN, vec3 vecO){
   
   vec3 color = vec3(0.0);
   mat3 rotateM = rotate(vecN);
@@ -135,16 +165,32 @@ vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO){
       continue;
     } else {
       float F = coefFrenel(Icam,m);
-      float D = coefBeckmann(m,vecN);
-      float G = coefOmbrage(vecN,m,vecO,Icam);
+      float D;
+      float G;
+      if(!uIsWalterGGX){
+        D = coefBeckmann(m,vecN);
+        G = coefOmbrage(vecN,m,vecO,Icam);
+      }else{
+        D = coefDistibutionGGX(m,vecN);
+        G = coefOmbrageGGX(myDot(vecO,m))*coefOmbrageGGX(myDot(Icam,m));
+      }
+
       float pdf = D*cosThetaM; 
       vec3 Iobj = (mat3(uInverseRotMatrix)*Icam).xzy;
-      vec3 colorFinal = textureCube(uskybox, Iobj).xyz;
-      if(!uisMiroirDePoli){
-       float brdf = (F*D*G)/(4.0*IN*ON);
-       color += (colorFinal*brdf*IN)/pdf;
+      vec3 colorSkyBox = textureCube(uskybox, Iobj).xyz;
+
+      if(!uIsMiroirDepoli){
+        float IM = myDot(Icam,m);
+        float OM = myDot(vecO,m);
+
+        float numerateurBTDF = (uNi*uNi)*(F*G*D);
+        float denominateurBTDF = (uNi*IM)+(uNi*OM);
+
+        float btdf = (IM*OM/IN*ON)*(numerateurBTDF/denominateurBTDF);
+        float brdf = (F*D*G)/(4.0*IN*ON);
+        color += (colorSkyBox*(brdf+btdf)*IN)/pdf;
       }else{
-        color += colorFinal;
+        color += colorSkyBox;
       }
      
       nbIter++;
@@ -153,8 +199,6 @@ vec3 getEchantillonnage(float iter, vec3 Kd, vec3 vecN, vec3 vecO){
 
   return (color/float(nbIter));
 }
-
-
 
 void main() {
   vec3 colorFinal = uColorObj;
@@ -168,7 +212,7 @@ void main() {
   vec3 directionT = (mat3(uInverseRotMatrix)*refract(-vecO,vecN,1.0/uNi)).xzy;
 
   if(uIsEchantillonnage){
-    vec3 echantillon = getEchantillonnage(uNbIteration,Kd,vecN,vecO);
+    vec3 echantillon = getEchantillonnage(uNbIteration,vecN,vecO);
     colorFinal = echantillon;
   }
 
