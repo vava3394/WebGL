@@ -13,7 +13,6 @@
         <script type="text/javascript" src="script/light.js"></script>
 
         <link rel="stylesheet" type="text/css" href="css/style.css" />
-    
     </head>
 
     <body onload="webGLStart();">
@@ -33,7 +32,7 @@
                     <div class="settings">
                         <p style="text-align: center; color: white">Joue avec moi !</p>
                         <div class="setting-select-cubeMap" id="val">
-                            <label for="select-cubeMap" style="margin-left: 10px;">CubeMap</label>
+                            <label for="select-cubeMap" style="margin-left: 10px">CubeMap</label>
                             <select id="select-cubeMap" onchange="setImageTextCubeMap(this.value)">
                                 <option value="0" selected>Chateau</option>
                                 <option value="1">Space</option>
@@ -41,7 +40,7 @@
                             </select>
                         </div>
                         <div class="setting-select-objet" id="val">
-                            <label for="select-obj" style="margin-left: 10px;">Objet</label>
+                            <label for="select-obj" style="margin-left: 10px">Objet</label>
                             <select id="select-obj" onchange="setObj(this.value)">
                                 <option value="0" selected>Bunny</option>
                                 <option value="1">Sphere</option>
@@ -52,54 +51,54 @@
                         </div>
 
                         <div class="setting-color" id="val">
-                            <label for="colorpicker" style="margin-left: 10px;">Couleur de l'objet</label>
+                            <label for="colorpicker" style="margin-left: 10px">Couleur de l'objet</label>
                             <input type="color" id="colorpicker" value="#ffffff" oninput="handleColor(event)" />
-                            <br /> <br />
-                            <label for="colorpicker" style="margin-left: 10px;">Couleur lumière</label>
-                            <input type="color" style="margin-left: 16px;"  id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
+                            <br />
+                            <br />
+                            <label for="colorpicker" style="margin-left: 10px">Couleur lumière</label>
+                            <input type="color" style="margin-left: 16px" id="colorpicker" value="#ffffff" oninput="handleLightColor(event)" />
                         </div>
 
-
                         <div class="setting-select-objet" id="val">
-                            <label for="select-obj" style="margin-left: 10px;">Propriétés</label>
-                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChangeProps(this.value)">
-                                <option value=0>Miroir</option>
-                                <option value=1>Miroir avec transparence</option>
-                                <option value=2>Cook et torrance</option>
-                                <option value=3>Transparence</option>
-                                <option value=4 selected>Miroir dépoli</option>
-                                <option value=5>Echantillonnage d'importance </option>
+                            <label for="select-obj" style="margin-left: 10px">Propriétés</label>
+                            <select id="select-obj" style="margin-top: 10px" onchange="handleChangeProps(this.value)">
+                                <option value="0">Miroir</option>
+                                <option value="1">Miroir avec transparence</option>
+                                <option value="2">Cook et torrance</option>
+                                <option value="3">Transparence</option>
+                                <option value="4" selected>Miroir dépoli</option>
+                                <option value="5">Miroir fresnel</option>
                             </select>
                         </div>
 
                         <div class="setting-select-objet" id="val">
-                            <label for="select-obj" style="margin-left: 10px;">Bonus</label>
-                            <select id="select-obj" style="margin-top: 10px;" onchange="handleChangeBonusProps(this.value)">
-                                <option value=0>Beckman</option>
-                                <option value=1>GGX</option>
+                            <label for="select-obj" style="margin-left: 10px">Bonus</label>
+                            <select id="select-obj" style="margin-top: 10px" onchange="handleChangeBonusProps(this.value)">
+                                <option value="0">Beckman</option>
+                                <option value="1">GGX</option>
                             </select>
                         </div>
 
-                        <div class="setting-slider" id="val">
-                            <div>
+                        <div class="setting-slider" id="controllers">
+                            <div id="val1">
                                 <label for="indices" id="val">Indices de réfraction</label>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeNi" value="1.3" min="1.0" max="3.0" step="0.1" oninput="handleNi(this.value)" />
                                 <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputNi" step="0.1" onchange="handleNi(this.value)" />
                             </div>
                             <br/>
-                            <div>
+                            <div id="val2">
                                 <label for="indices" id="val">Sigma</label> </br>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeSigma" value="0.0001" min="0.0001" max="0.5" step="0.0001" oninput="handleSigma(this.value)" />
                                 <input type="number" value="1.3" min="1.0" max="50" style="margin-left: 10px;" id="inputSigma" step="0.1" onchange="handleSigma(this.value)" />
                             </div>
                             <br/>
-                            <div>
-                                <label for="indices" id="val">Intesité lumineuse</label> </br>
+                            <div id="val3">
+                                <label for="indices" id="val">Intensité lumineuse</label> </br>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeIntensite" value="1" min="0.5" max="10" step="0.1" oninput="handleIntensiteLumineuse(this.value)" />
                                 <input type="number" value="1" min="0.5" max="10" style="margin-left: 10px;" id="inputIntensite" step="0.1" onchange="handleIntensiteLumineuse(this.value)" />
                             </div>
-                            <div>
-                                <label for="indices" id="val">nombre échantion</label> </br>
+                            <div id="val4">
+                                <label for="indices" id="val">Nombre échantillon</label> </br>
                                 <input type="range" class="indices" style="margin-left: 10px;" name="indices" id="rangeNbEchantion" value="1" min="1" max="100" step="1" oninput="handleNbEchantion(this.value)" />
                                 <input type="number" value="1" min="1" max="100" style="margin-left: 10px;" id="inputNbEchantion" step="1" onchange="handleNbEchantion(this.value)" />
                             </div>
@@ -119,7 +118,6 @@
         var inputIntensite = document.getElementById("inputIntensite");
         var sliderNbEchantion = document.getElementById("rangeNbEchantion");
         var inputNbEchantion = document.getElementById("inputNbEchantion");
-        
 
         const handleNi = (value) => {
             setNi(value);
@@ -129,24 +127,24 @@
 
         const handleSigma = (value) => {
             setSigma(value);
-            sliderSigma.value=value;
-            inputSigma.value=value;
-        }
+            sliderSigma.value = value;
+            inputSigma.value = value;
+        };
 
         const handleIntensiteLumineuse = (value) => {
             setIntensiteLumineuse(value);
             sliderIntensite.value = value;
             inputIntensite.value = value;
-        }
+        };
 
         const handleNbEchantion = (value) => {
             setNbEchantion(value);
             sliderNbEchantion.value = value;
             inputNbEchantion.value = value;
-        }
+        };
 
-        const handleChangeBonusProps = (value) =>{
-            switch(value){
+        const handleChangeBonusProps = (value) => {
+            switch (value) {
                 case "0":
                     setIsWalterGGX(false);
                     break;
@@ -154,62 +152,119 @@
                     setIsWalterGGX(true);
                     break;
             }
-        }
+        };
 
-        const handleChangeProps = (value) =>{
-            switch(value){
+        const handleChangeProps = (value) => {
+            switch (value) {
                 case "0":
-                    setIsMirroir(true)
-                    setIsTransparence(false)
-                    setIsCooker(false)
-                    setIsEchantillon(false)
-                    setIsMiroirDePoli(false)
+                    setIsMirroir(true);
+                    setIsTransparence(false);
+                    setIsCooker(false);
+                    setIsEchantillon(false);
+                    setIsMiroirDePoli(false);
+                    changeValue(value);
                     break;
                 case "1":
-                    setIsMirroir(true)
-                    setIsTransparence(true)
-                    setIsCooker(false)
-                    setIsEchantillon(false)
-                    setIsMiroirDePoli(false)
+                    setIsMirroir(true);
+                    setIsTransparence(true);
+                    setIsCooker(false);
+                    setIsEchantillon(false);
+                    setIsMiroirDePoli(false);
+                    changeValue(value);
                     break;
                 case "2":
-                    setIsMirroir(false)
-                    setIsTransparence(false)
-                    setIsCooker(true)
-                    setIsEchantillon(false)
-                    setIsMiroirDePoli(false)
+                    setIsMirroir(false);
+                    setIsTransparence(false);
+                    setIsCooker(true);
+                    setIsEchantillon(false);
+                    setIsMiroirDePoli(false);
+                    changeValue(value);
                     break;
                 case "3":
-                    setIsMirroir(false)
-                    setIsTransparence(true)
-                    setIsCooker(false)
-                    setIsEchantillon(false)
-                    setIsMiroirDePoli(false)
+                    setIsMirroir(false);
+                    setIsTransparence(true);
+                    setIsCooker(false);
+                    setIsEchantillon(false);
+                    setIsMiroirDePoli(false);
+                    changeValue(value);
                     break;
                 case "4":
-                    setIsMirroir(false)
-                    setIsTransparence(false)
-                    setIsCooker(false)
-                    setIsEchantillon(true)
-                    setIsMiroirDePoli(true)
+                    setIsMirroir(false);
+                    setIsTransparence(false);
+                    setIsCooker(false);
+                    setIsEchantillon(true);
+                    setIsMiroirDePoli(true);
+                    changeValue(value);
                     break;
                 case "5":
-                    setIsMirroir(false)
-                    setIsTransparence(false)
-                    setIsCooker(false)
-                    setIsEchantillon(true)
-                    setIsMiroirDePoli(false)
+                    setIsMirroir(false);
+                    setIsTransparence(false);
+                    setIsCooker(false);
+                    setIsEchantillon(true);
+                    setIsMiroirDePoli(false);
+                    changeValue(value);
                     break;
-                default: 
-                    setIsMirroir(false)
-                    setIsTransparence(false)
-                    setIsCooker(false)
-                    setIsEchantillon(true)
-                    setIsMiroirDePoli(true)
+                default:
+                    setIsMirroir(false);
+                    setIsTransparence(false);
+                    setIsCooker(false);
+                    setIsEchantillon(true);
+                    setIsMiroirDePoli(true);
+                    changeValue(value);
+            }
+        };
+
+        function changeValue(value) {
+
+            var div1 = document.getElementById("val1");
+            var div2 = document.getElementById("val2");
+            var div3 = document.getElementById("val3");
+            var div4 = document.getElementById("val4");
+
+            switch(value){
+                case "0":
+                    div1.style.display ="none";
+                    div2.style.display ="none";
+                    div3.style.display = "block";
+                    div4.style.display ="none";
+                    break;
+                case "1":
+                    div1.style.display = "block";
+                    div2.style.display ="none";
+                    div3.style.display = "block";
+                    div4.style.display ="none";
+                    break;
+                case "2":
+                    div1.style.display = "block";
+                    div2.style.display = "block";
+                    div3.style.display = "block";
+                    div4.style.display ="none";
+                    break;
+                case "3":
+                    div1.style.display = "block";
+                    div2.style.display ="none";
+                    div3.style.display = "block";
+                    div4.style.display ="none";
+                    break;
+                case "4":
+                    div1.style.display = "block";
+                    div2.style.display = "block";
+                    div3.style.display = "block";
+                    div4.style.display = "block";
+                    break;
+                case "5":
+                    div1.style.display = "block";
+                    div2.style.display ="block";
+                    div3.style.display ="block";
+                    div4.style.display ="block";
+                    break;
+                default:
+                    div1.style.display ="none";
+                    div2.style.display ="none";
+                    div3.style.display ="none";
+                    div4.style.display ="none";
             }
         }
-
-
         const hexToRgb = (hex) =>
             hex
                 .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => "#" + r + r + g + g + b + b)
@@ -221,14 +276,14 @@
             const color = ev.target.value;
             colors = hexToRgb(color);
             colors = colors.map((element) => (element = element / 255));
-            console.log(colors)
+            console.log(colors);
         }
 
         function handleLightColor(ev) {
             const color = ev.target.value;
             LIGHT.color = hexToRgb(color);
             LIGHT.color = LIGHT.color.map((element) => (element = element / 255));
-            console.log(LIGHT.color)
+            console.log(LIGHT.color);
         }
 
         // valeur par defaut
@@ -239,9 +294,9 @@
         setIsEchantillon(true);
         handleChangeProps("4");
         document.querySelector(".open-menu-btn").addEventListener("click", function () {
-        if (document.querySelector("body").classList.contains("closed-menu")) {
-            document.querySelector("body").classList.remove("closed-menu");
-        } else document.querySelector("body").classList.add("closed-menu");
-    });
+            if (document.querySelector("body").classList.contains("closed-menu")) {
+                document.querySelector("body").classList.remove("closed-menu");
+            } else document.querySelector("body").classList.add("closed-menu");
+        });
     </script>
 </html>
