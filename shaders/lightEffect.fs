@@ -216,7 +216,7 @@ vec3 getEchantillonnage(float iter, vec3 vecN, vec3 vecO){
         float OM = myDot(vecO,m);
 
         float brdf = (F*D*G)/(4.0*IN*ON);
-        //choix possible d'ajouté la refraction
+        //choix possible d'ajouté la refraction pour le bonus mais de mon point vue fonctionne pas comme voulue
         if(uIsBTDF){
           float numerateurBTDF = (uNi*uNi)*((1.0-F)*G*D);
           float denominateurBTDF = (uNi*IM)+(OM);
