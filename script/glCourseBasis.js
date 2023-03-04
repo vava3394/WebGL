@@ -151,7 +151,6 @@ function webGLStart() {
     tabObj.push(new objmesh("objs/porsche.obj", "lightEffect"));
     tabObj.push(new objmesh("objs/mustang.obj", "lightEffect"));
     tabObj.push(new objmesh("objs/cube.obj", "lightEffect"));
-    tabObj.push(new objmesh("objs/Lara_Croft.obj", "lightEffect"));
 
     obj = tabObj[1];
 
@@ -212,6 +211,10 @@ function setNbEchantion(value) {
 
 function setIsWalterGGX(value){
 	isWalterGGX = value;
+}
+
+function setIsBTDFUse(value){
+    isBTDFUse = value;
 }
 
 // =====================================================

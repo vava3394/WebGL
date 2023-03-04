@@ -12,6 +12,7 @@ var isCookerTorrance = false;
 var isEchantionnage = false;
 var isMiroirDePoli = false;
 var isWalterGGX = false;
+var isBTDFUse = false;
 
 var colors = [1.0,1.0,1.0];
 
@@ -60,6 +61,7 @@ class objmesh {
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsCookerTorrance'),isCookerTorrance);
 		gl.uniform1i(gl.getUniformLocation(this.shader,'uIsMiroirDepoli'),isMiroirDePoli);
 		gl.uniform1f(gl.getUniformLocation(this.shader,'uIsWalterGGX'),isWalterGGX);
+		gl.uniform1f(gl.getUniformLocation(this.shader,'uIsBTDF'),isBTDFUse);
 		gl.uniform1f(gl.getUniformLocation(this.shader,'usigma'),sigma);
 
 		
